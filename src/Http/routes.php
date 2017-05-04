@@ -6,5 +6,5 @@
  * RouteServiceProvider
  */
 Route::group(['middleware' => 'web'], function () {
-    Route::get('/managment/users', 'UsersManagmentController@index');
+    Route::get('/management/users', 'UsersManagementController@index');
 });
