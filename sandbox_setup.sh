@@ -31,3 +31,9 @@ touch database/testing.database.sqlite
 
 studio load ..
 composer require acacha/users=dev-master
+
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
+php artisan migrate
+php artisan adminlte:menu
+php artisan make:menu /management/users Users

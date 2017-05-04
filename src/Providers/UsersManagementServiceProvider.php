@@ -3,7 +3,9 @@
 namespace Acacha\Users\Providers;
 
 use AcachaUsers;
+use Gate;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Permission\PermissionServiceProvider;
 
 /**
  * Class UsersManagementServiceProvider.
@@ -23,6 +25,21 @@ class UsersManagementServiceProvider extends ServiceProvider
         $this->app->bind('AcachaUsers', function () {
             return new \Acacha\Users\AcachaUsers();
         });
+
+        if (config('acacha_users.spatie_permission', true)) {
+            $this->registerSpatiePermissionServiceProvider();
+        }
+    }
+
+    /**
+     * Register Spatie permissions service Provider.
+     */
+    protected function registerSpatiePermissionServiceProvider()
+    {
+        $this->app->register(PermissionServiceProvider::class);
+
+        //TODO: publish spatie config file
+        //Add Trait to App/User
     }
 
     /**
@@ -34,6 +51,8 @@ class UsersManagementServiceProvider extends ServiceProvider
         //Publish
         $this->publishLanguages();
         $this->publishViews();
+        
+//        $this->defineGates();
     }
 
     /**
@@ -67,5 +86,14 @@ class UsersManagementServiceProvider extends ServiceProvider
         $this->loadViewsFrom(ACACHA_USERS_PATH.'/resources/views/', 'acacha_users');
 
         $this->publishes(AcachaUsers::views(), 'acacha_users');
+    }
+
+    private function defineGates()
+    {
+//        Gate::define('manage-users', function ($user) {
+//            dd($user->can('manage-users'));
+//            return $user->can('manage-users');
+//
+//        });
     }
 }

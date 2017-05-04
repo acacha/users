@@ -2,6 +2,7 @@
 
 namespace Acacha\Users\Http\Controllers;
 
+use Auth;
 use Illuminate\Http\Response;
 
 /**
@@ -27,6 +28,7 @@ class UsersManagementController extends Controller
      */
     public function index()
     {
+        $this->authorize('manage-users');
         return view('acacha_users::managment');
     }
 }
