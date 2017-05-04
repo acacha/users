@@ -27,6 +27,6 @@ class UsersManagmentController extends Controller
      */
     public function index()
     {
-        return view('adminlte::home');
+        return view('acacha_users::managment');
     }
 }
