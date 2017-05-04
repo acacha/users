@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('htmlheader_title')
-    {{ trans('acacha-users::message.usersmanagment-htmlheader-title') }}
+    {{ trans('acacha_users_lang::message.usersmanagment-htmlheader-title') }}
 @endsection
 
 
