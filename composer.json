@@ -1,18 +1,20 @@
 {
-    "name": ":vendor/:package_name",
+    "name": "acacha/users",
     "type": "library",
-    "description": ":package_description",
+    "description": "User managment with Laravel and adminlte-laravel",
     "keywords": [
-        ":vendor",
-        ":package_name"
+        "acacha",
+        "users",
+        "laravel",
+        "adminlte"
     ],
-    "homepage": "https://github.com/:vendor/:package_name",
+    "homepage": "https://github.com/acacha/users",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": ":author_email",
-            "homepage": ":author_website",
+            "name": "Sergi Tur Badenas",
+            "email": "sergiturbadenas@gmail.com",
+            "homepage": "https://github.com/acacha",
             "role": "Developer"
         }
     ],
@@ -25,12 +27,12 @@
     },
     "autoload": {
         "psr-4": {
-            ":vendor\\:package_name\\": "src"
+            "Acacha\\Users\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            ":vendor\\:package_name\\": "tests"
+            "Acacha\\Users\\": "tests"
         }
     },
     "scripts": {
