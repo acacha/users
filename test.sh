@@ -1,6 +1,6 @@
 #!/bin/bash
 ./sandbox_setup.sh
-cd sandbox
+cd ../sandbox
 php artisan dusk:install
 php artisan serve --env=dusk.local &
 php artisan dusk

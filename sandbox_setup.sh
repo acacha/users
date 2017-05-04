@@ -12,13 +12,13 @@ if ! type "studio" > /dev/null; then
     composer global require "franzl/studio"
 fi
 export PATH="~/.composer/vendor/bin:~/.config/composer/vendor:$PATH"
-rm -rf sandbox
+rm -rf ../sandbox
 if [ -e ~/.composer/vendor/bin/laravel ];then
-    ~/.composer/vendor/bin/laravel new sandbox
+    ~/.composer/vendor/bin/laravel new ../sandbox
 elif [ -e ~/.config/composer/vendor/bin/laravel ];then
-  ~/.config/composer/vendor/bin/laravel new sandbox
+  ~/.config/composer/vendor/bin/laravel new ../sandbox
 fi
-cd sandbox
+cd ../sandbox
 if [ -e ~/.composer/vendor/bin/adminlte-laravel ];then
   ~/.composer/vendor/bin/adminlte-laravel --dev install
 elif [ -e ~/.config/composer/vendor/bin/adminlte-laravel ];then
