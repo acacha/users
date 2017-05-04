@@ -13,5 +13,5 @@ return [
     |
     */
 
-    'usersmanagment-htmlheader-title'   => 'Users managment',
+    'usersmanagment-htmlheader-title'   => 'Users Management',
 ];
