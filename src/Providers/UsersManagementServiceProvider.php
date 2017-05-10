@@ -2,9 +2,11 @@
 
 namespace Acacha\Users\Providers;
 
+use Acacha\Stateful\Providers\StatefulServiceProvider;
 use AcachaUsers;
-use Gate;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
+use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
 /**
@@ -26,8 +28,18 @@ class UsersManagementServiceProvider extends ServiceProvider
             return new \Acacha\Users\AcachaUsers();
         });
 
-        if (config('acacha_users.spatie_permission', true)) {
+        if (config('acacha_users.register_spatie_permission_service_provider', true)) {
             $this->registerSpatiePermissionServiceProvider();
+        }
+
+        if (config('acacha_users.register_laravel_passport_service_provider', true)) {
+            $this->registerLaravelPassportServiceProvider();
+            Passport::routes();
+        }
+
+        if (config('acacha_users.register_acacha_stateful_service_provider', true)) {
+            $this->registerAcachaStatefulServiceProvider();
+            Passport::routes();
         }
     }
 
@@ -43,6 +55,25 @@ class UsersManagementServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register Laravel passport service Provider.
+     */
+    protected function registerLaravelPassportServiceProvider()
+    {
+        $this->app->register(PassportServiceProvider::class);
+
+        //TODO: execute php artisan passport:install
+        //Add Trait to App/User HasApiTokens
+    }
+
+    /**
+     * Register Acacha Stateful service Provider.
+     */
+    protected function registerAcachaStatefulServiceProvider()
+    {
+        $this->app->register(StatefulServiceProvider::class);
+    }
+
+    /**
      * Bootstrap the application services.
      */
     public function boot() {
@@ -51,8 +82,10 @@ class UsersManagementServiceProvider extends ServiceProvider
         //Publish
         $this->publishLanguages();
         $this->publishViews();
+        $this->publishConfigAuth();
+
+        $this->loadMigrations();
         
-//        $this->defineGates();
     }
 
     /**
@@ -88,12 +121,19 @@ class UsersManagementServiceProvider extends ServiceProvider
         $this->publishes(AcachaUsers::views(), 'acacha_users');
     }
 
-    private function defineGates()
-    {
-//        Gate::define('manage-users', function ($user) {
-//            dd($user->can('manage-users'));
-//            return $user->can('manage-users');
-//
-//        });
+    /**
+     * Publish config auth.
+     */
+    private function publishConfigAuth() {
+        $this->publishes(AcachaUsers::configAuth(), 'acacha_users');
     }
+
+    /**
+     * Load package migrations.
+     */
+    public function loadMigrations()
+    {
+        $this->loadMigrationsFrom(ACACHA_USERS_PATH .'/database/migrations');
+    }
+
 }

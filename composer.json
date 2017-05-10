@@ -20,6 +20,8 @@
     ],
     "require": {
         "php": "~5.6|~7.0",
+        "acacha/stateful-eloquent": "^0.1.3",
+        "laravel/passport": "^2.0",
         "spatie/laravel-permission": "^2.1"
     },
     "require-dev": {

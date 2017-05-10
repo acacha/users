@@ -6,5 +6,9 @@
  * RouteServiceProvider
  */
 Route::group(['middleware' => 'web'], function () {
-    Route::get('/management/users', 'UsersManagementController@index');
+    Route::get('/management/users', 'UsersManagementController@web');
+});
+
+Route::group(['middleware' => 'api','prefix' => 'api'], function () {
+    Route::middleware('auth:api')->get('/management/users', 'UsersManagementController@index');
 });

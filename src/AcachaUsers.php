@@ -31,4 +31,17 @@ class AcachaUsers
                 resource_path('views/vendor/acacha_users/managment.blade.php')
         ];
     }
+
+    /**
+     * Config auth copy path.
+     *
+     * @return array
+     */
+    public function configAuth()
+    {
+        return [
+            ACACHA_USERS_PATH.'/config/auth.php' =>
+                config_path('auth.php')
+        ];
+    }
 }

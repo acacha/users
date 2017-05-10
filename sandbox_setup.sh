@@ -37,3 +37,5 @@ php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvid
 php artisan migrate
 php artisan adminlte:menu
 php artisan make:menu /management/users Users
+php artisan passport:install
+php artisan vendor:publish --tag=passport-components
