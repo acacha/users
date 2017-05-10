@@ -78,18 +78,54 @@ class UsersManagementTest extends TestCase
             ->assertStatus(401);
     }
 
+
+    /**
+     * Api show an user for authorized users correctly.
+     *
+     * @test
+     */
+    public function api_show__an_user_for_authorized_users_correctly()
+    {
+        $user = factory('App\User')->create();
+        $this->actingAs($user,'api')
+            ->json('GET', '/api/management/users')
+            ->assertStatus(200)
+
+            ->assertExactJson([
+                'current_page' => 1,
+                'data' => [
+                    ['id'=> $user->id,
+                    'name' =>  $user->name,
+                    'email' => $user->email,
+                    'created_at' => $user->created_at->toDateTimeString(),
+                    'updated_at' => $user->updated_at->toDateTimeString()
+                    ]
+                ],
+                'from' => 1,
+                'last_page' => 1,
+                'next_page_url' => null,
+                'per_page' => 15,
+                'prev_page_url' => null,
+                'to' => 1,
+                'total' => 1
+            ]);
+    }
+
     /**
      * Api show all users for_authorized_users.
      *
      * @test
-     * @group failing
      */
-    public function api_show__all_users_for_authorized_users()
+    public function api_show__all_users_for_authorized_users_with_correct_structure()
     {
-        $user = factory('App\User')->create();
-        $this->actingAs($user,'api')
+        $user = factory('App\User',10)->create();
+        $this->actingAs($user[0],'api')
             ->json('GET','/api/management/users')
-            ->assertStatus(200);
+            ->assertJsonStructure(['data' => [
+                    '*' => [
+                        'id', 'name', 'email','created_at','updated_at'
+                ]
+            ]]);
     }
 
 }
