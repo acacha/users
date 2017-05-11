@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use Auth;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 /**
@@ -16,7 +18,7 @@ class UsersManagementTest extends TestCase
     use DatabaseMigrations;
 
     /**
-     * Unauthorized user cannnot browse users management.
+     * Unauthorized user cannot browse users management.
      *
      * @test
      * @return void
@@ -42,6 +44,17 @@ class UsersManagementTest extends TestCase
     }
 
     /**
+     * Check app already have manage-users permission.
+     *
+     * @test
+     */
+    public function check_app_already_have_manage_users_permission()
+    {
+        $this->seedPermissions();
+        $this->assertPermissionExists('manage-users');
+    }
+
+    /**
      * Authorized user can browse users managment.
      *
      * @test
@@ -62,7 +75,7 @@ class UsersManagementTest extends TestCase
      */
     public function api_show_302_listing_all_users_if_no_xhr_request()
     {
-        $this->get('/api/management/users')
+        $this->get('/api/v1/management/users')
              ->assertStatus(302)
              ->assertRedirect('login');
     }
@@ -74,7 +87,7 @@ class UsersManagementTest extends TestCase
      */
     public function api_show_401_listing_all_users_for_unauthorized_users()
     {
-        $this->json('GET','/api/management/users')
+        $this->json('GET','/api/v1/management/users')
             ->assertStatus(401);
     }
 
@@ -86,19 +99,18 @@ class UsersManagementTest extends TestCase
      */
     public function api_show__an_user_for_authorized_users_correctly()
     {
-        $user = factory('App\User')->create();
-        $this->actingAs($user,'api')
-            ->json('GET', '/api/management/users')
+        $this->signInAsUserManager('api')
+            ->json('GET', '/api/v1/management/users')
             ->assertStatus(200)
 
             ->assertExactJson([
                 'current_page' => 1,
                 'data' => [
-                    ['id'=> $user->id,
-                    'name' =>  $user->name,
-                    'email' => $user->email,
-                    'created_at' => $user->created_at->toDateTimeString(),
-                    'updated_at' => $user->updated_at->toDateTimeString()
+                    ['id'=> Auth::user()->id,
+                    'name' =>  Auth::user()->name,
+                    'email' => Auth::user()->email,
+                    'created_at' => Auth::user()->created_at->toDateTimeString(),
+                    'updated_at' => Auth::user()->updated_at->toDateTimeString()
                     ]
                 ],
                 'from' => 1,
@@ -119,8 +131,8 @@ class UsersManagementTest extends TestCase
     public function api_show__all_users_for_authorized_users_with_correct_structure()
     {
         $user = factory('App\User',10)->create();
-        $this->actingAs($user[0],'api')
-            ->json('GET','/api/management/users')
+        $this->signInAsUserManager('api')
+            ->json('GET','/api/v1/management/users')
             ->assertJsonStructure(['data' => [
                     '*' => [
                         'id', 'name', 'email','created_at','updated_at'
@@ -128,4 +140,83 @@ class UsersManagementTest extends TestCase
             ]]);
     }
 
+    /**
+     * ########## INVITATIONS
+     */
+
+    /**
+     * Check app already have send-user-invitations permission.
+     *
+     * @test
+     */
+    public function check_app_already_have_send_user_invitations_permission()
+    {
+        $this->seedPermissions();
+        $this->assertPermissionExists('send-user-invitations');
+    }
+
+    /**
+     * Guest users cannot sent user invitations.
+     *
+     * @test
+     */
+    public function guest_users_cannot_sent_user_invitations()
+    {
+        $response = $this->post('/api/v1/management/users/send/invitation');
+
+        $response->assertStatus(302);
+    }
+
+    /**
+     * Users without authorization cant sent user invitations.
+     *
+     * @test
+     */
+    public function users_without_authorization_cant_sent_user_invitations()
+    {
+        $this->signIn(null,'api');
+        $response = $this->post('/api/v1/management/users/send/invitation');
+        $response->assertStatus(403);
+    }
+
+    /**
+     * Api creates a new invitation.
+     *
+     * @group failing2
+     * @test
+     */
+    public function api_creates_a_new_invitation()
+    {
+        $this->signInAsUserManager('api');
+        $response = $this
+            ->post('/api/v1/management/users/send/invitation');
+
+        $response->assertStatus(200);
+    }
+
+
+    /**
+     * Assert permission exists in datadase.
+     *
+     * @param $permission
+     */
+    private function assertPermissionExists($permission)
+    {
+        $this->assertInstanceOf(Permission::class, $p = Permission::findByName($permission));
+        $this->assertEquals($permission , $p->name);
+        $this->assertDatabaseHas('permissions', [
+            'name' => $permission
+        ]);
+    }
+
+    /**
+     * Seed permissions.
+     */
+    private function seedPermissions()
+    {
+        //Publish seed
+        $this->artisan('vendor:publish', ['--provider' => 'Acacha\Users\Providers\UsersManagementServiceProvider', '--tag' => 'acacha_users_seeds']);
+        //Execute seed
+        $this->artisan('db:seed',['--class' => 'CreateUsersManagementPermissions']);
+    }
 }

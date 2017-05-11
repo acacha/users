@@ -2,6 +2,8 @@
 
 namespace Acacha\Users\Http\Controllers;
 
+use Acacha\Users\Http\Requests\SendInvitationRequest;
+use Acacha\Users\Models\UserInvitation;
 use App\User;
 use Response;
 
@@ -44,10 +46,9 @@ class UsersManagementController extends Controller
     /**
      * Send Invitation.
      */
-    public function sendInvitation()
+    public function sendInvitation(SendInvitationRequest $request)
     {
-        $this->authorize('send-user-invitations');
-        $this->authorize('manage-users');
-        dump('hey');
+        dd($request->input('email'));
+        UserInvitation::create(['email' => $request->input('email') ]);
     }
 }
