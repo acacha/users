@@ -9,6 +9,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/management/users', 'UsersManagementController@web');
 });
 
-Route::group(['middleware' => 'api','prefix' => 'api'], function () {
+Route::group(['middleware' => 'api','prefix' => 'api/v1'], function () {
     Route::middleware('auth:api')->get('/management/users', 'UsersManagementController@index');
+    Route::middleware('auth:api')->post('/management/users/send/invitation', 'UsersManagementController@sendInvitation');
 });

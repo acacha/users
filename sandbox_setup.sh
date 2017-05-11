@@ -39,3 +39,4 @@ php artisan adminlte:menu
 php artisan make:menu /management/users Users
 php artisan passport:install
 php artisan vendor:publish --tag=passport-components
+php artisan vendor:publish --provider="Acacha\Users\Providers\UsersManagementServiceProvider" --tag="acacha_users_seeds"

@@ -85,6 +85,8 @@ class UsersManagementServiceProvider extends ServiceProvider
         $this->publishConfigAuth();
 
         $this->loadMigrations();
+        $this->publishSeeds();
+
         
     }
 
@@ -134,6 +136,13 @@ class UsersManagementServiceProvider extends ServiceProvider
     public function loadMigrations()
     {
         $this->loadMigrationsFrom(ACACHA_USERS_PATH .'/database/migrations');
+    }
+
+    /**
+     * Publish seeds.
+     */
+    private function publishSeeds() {
+        $this->publishes(AcachaUsers::seeds(), 'acacha_users_seeds');
     }
 
 }

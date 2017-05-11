@@ -44,4 +44,12 @@ class AcachaUsers
                 config_path('auth.php')
         ];
     }
+
+    public function seeds()
+    {
+        return [
+            ACACHA_USERS_PATH.'/database/seeds' =>
+                database_path('seeds')
+        ];
+    }
 }

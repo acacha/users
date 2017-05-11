@@ -39,4 +39,14 @@ class UsersManagementController extends Controller
     {
         return User::paginate();
     }
+
+    /**
+     * Send Invitation.
+     */
+    public function sendInvitation()
+    {
+        $this->authorize('send-user-invitations');
+        $this->authorize('manage-users');
+        dump('hey');
+    }
 }
