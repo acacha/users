@@ -45,6 +45,11 @@ class AcachaUsers
         ];
     }
 
+    /**
+     * Seeds copy path.
+     *
+     * @return array
+     */
     public function seeds()
     {
         return [

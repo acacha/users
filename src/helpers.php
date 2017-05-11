@@ -43,9 +43,11 @@ if (! function_exists('initialize_users_management_permissions')) {
     function initialize_users_management_permissions()
     {
         $manageUsers = role_first_or_create('manage-users');
+        permission_first_or_create('see-manage-users-view');
         permission_first_or_create('list-users');
         permission_first_or_create('send-user-invitations');;
 
+        $manageUsers->givePermissionTo('see-manage-users-view');
         $manageUsers->givePermissionTo('list-users');
         $manageUsers->givePermissionTo('send-user-invitations');
 

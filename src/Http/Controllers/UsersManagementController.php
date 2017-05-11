@@ -28,7 +28,7 @@ class UsersManagementController extends Controller
      */
     public function web()
     {
-        $this->authorize('manage-users');
+        $this->authorize('see-manage-users-view');
         return view('acacha_users::managment');
     }
 
@@ -37,6 +37,7 @@ class UsersManagementController extends Controller
      */
     public function index()
     {
+        $this->authorize('list-users');
         return User::paginate();
     }
 
