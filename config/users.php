@@ -44,6 +44,6 @@ return [
     |
     */
 
-    'register_acacha_stateful_service_provider' => true
+    'register_acacha_stateful_service_provider' => true,
 
 ];

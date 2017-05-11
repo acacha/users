@@ -11,5 +11,8 @@ Route::group(['middleware' => 'web'], function () {
 
 Route::group(['middleware' => 'api','prefix' => 'api/v1'], function () {
     Route::middleware('auth:api')->get('/management/users', 'UsersManagementController@index');
-    Route::middleware('auth:api')->post('/management/users/send/invitation', 'UsersManagementController@sendInvitation');
+    //Send and store are the same: emails are sent when new user invitation is stored in database using eloquent events
+    Route::middleware('auth:api')->post('/management/users/invitations/send', 'UserInvitationsController@sendInvitation');
+    Route::middleware('auth:api')->post('/management/users/invitations', 'UserInvitationsController@store');
+    Route::middleware('auth:api')->get('/management/users/invitations', 'UserInvitationsController@index');
 });

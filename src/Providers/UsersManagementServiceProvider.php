@@ -3,6 +3,8 @@
 namespace Acacha\Users\Providers;
 
 use Acacha\Stateful\Providers\StatefulServiceProvider;
+use Acacha\Users\Models\UserInvitation;
+use Acacha\Users\Observers\UserInvitationObserver;
 use AcachaUsers;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
@@ -83,10 +85,12 @@ class UsersManagementServiceProvider extends ServiceProvider
         $this->publishLanguages();
         $this->publishViews();
         $this->publishConfigAuth();
+        $this->publishFactories();
 
         $this->loadMigrations();
         $this->publishSeeds();
 
+        $this->defineObservers();
         
     }
 
@@ -120,14 +124,14 @@ class UsersManagementServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(ACACHA_USERS_PATH.'/resources/views/', 'acacha_users');
 
-        $this->publishes(AcachaUsers::views(), 'acacha_users');
+        $this->publishes(AcachaUsers::views(), 'acacha_users_views');
     }
 
     /**
      * Publish config auth.
      */
     private function publishConfigAuth() {
-        $this->publishes(AcachaUsers::configAuth(), 'acacha_users');
+        $this->publishes(AcachaUsers::configAuth(), 'acacha_users_config');
     }
 
     /**
@@ -143,6 +147,21 @@ class UsersManagementServiceProvider extends ServiceProvider
      */
     private function publishSeeds() {
         $this->publishes(AcachaUsers::seeds(), 'acacha_users_seeds');
+    }
+
+    /**
+     * Publish factories.
+     */
+    private function publishFactories() {
+        $this->publishes(AcachaUsers::factories(), 'acacha_users_factories');
+    }
+
+    /**
+     * Define observers.
+     */
+    public function defineObservers()
+    {
+        UserInvitation::observe(UserInvitationObserver::class);
     }
 
 }

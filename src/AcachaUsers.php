@@ -57,4 +57,17 @@ class AcachaUsers
                 database_path('seeds')
         ];
     }
+
+    /**
+     * Factories copy path.
+     *
+     * @return array
+     */
+    public function factories()
+    {
+        return [
+            ACACHA_USERS_PATH.'/database/factories' =>
+                database_path('factories')
+        ];
+    }
 }

@@ -35,7 +35,9 @@ class UsersManagementController extends Controller
     }
 
     /**
-     * @return mixed
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -43,12 +45,4 @@ class UsersManagementController extends Controller
         return User::paginate();
     }
 
-    /**
-     * Send Invitation.
-     */
-    public function sendInvitation(SendInvitationRequest $request)
-    {
-        dd($request->input('email'));
-        UserInvitation::create(['email' => $request->input('email') ]);
-    }
 }

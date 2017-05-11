@@ -182,7 +182,6 @@ class UsersManagementTest extends TestCase
     /**
      * Api creates a new invitation.
      *
-     * @group failing2
      * @test
      */
     public function api_creates_a_new_invitation()
@@ -192,6 +191,30 @@ class UsersManagementTest extends TestCase
             ->post('/api/v1/management/users/send/invitation');
 
         $response->assertStatus(200);
+    }
+
+    /**
+     * Guest users cannot see user invitations.
+     * @group failing
+     * @test
+     */
+    public function guest_users_cannot_see_user_invitations()
+    {
+        $response = $this->post('/api/v1/management/users/send/invitation');
+
+        $response->assertStatus(302);
+    }
+
+    /**
+     * Users without authorization cant see user invitations.
+     * @group failing
+     * @test
+     */
+    public function users_without_authorization_cant_see_user_invitations()
+    {
+        $this->signIn(null,'api');
+        $response = $this->post('/api/v1/management/users/send/invitation');
+        $response->assertStatus(403);
     }
 
 

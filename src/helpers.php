@@ -39,19 +39,33 @@ if (! function_exists('permission_first_or_create')) {
     }
 }
 
+if (! function_exists('give_permission_to_role')) {
+    function give_permission_to_role($role,$permission)
+    {
+        try {
+            $role->givePermissionTo($permission);
+        } catch (Illuminate\Database\QueryException $e) {
+            dump('Permissions ' . $permission . ' already assigned to role ' . $role->name);
+        }
+    }
+}
+
 if (! function_exists('initialize_users_management_permissions')) {
     function initialize_users_management_permissions()
     {
         $manageUsers = role_first_or_create('manage-users');
         permission_first_or_create('see-manage-users-view');
         permission_first_or_create('list-users');
-        permission_first_or_create('send-user-invitations');;
+        permission_first_or_create('send-user-invitations');
+        permission_first_or_create('list-user-invitations');
 
-        $manageUsers->givePermissionTo('see-manage-users-view');
-        $manageUsers->givePermissionTo('list-users');
-        $manageUsers->givePermissionTo('send-user-invitations');
+        give_permission_to_role($manageUsers,'see-manage-users-view');
+        give_permission_to_role($manageUsers,'list-users');
+        give_permission_to_role($manageUsers,'send-user-invitations');
+        give_permission_to_role($manageUsers,'list-user-invitations');
 
         app(PermissionRegistrar::class)->registerPermissions();
 
     }
 }
+

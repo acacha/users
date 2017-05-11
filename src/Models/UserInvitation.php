@@ -45,6 +45,18 @@ class UserInvitation extends Model implements Stateful
         ]
     ];
 
+    /**
+     * Set the initial state.
+     *
+     * @return void
+     */
+    public function setInitialState()
+    {
+        $this->setAttribute($this->getStateColumn(), $this->getInitialState());
+        $this->token = hash_hmac('sha256', str_random(40), env('APP_KEY'));
+    }
+
+
 //    /**
 //     * @return bool
 //     */

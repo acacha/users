@@ -17,7 +17,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <users-management api-url="{{ env('APP_URL') . '/api/management/users'  }}"></users-management>
+                    <users-management api-url="{{ env('APP_URL') . env('API_URI','/api/v1/management/users') }}"></users-management>
                 </div>
             </div>
         </div>

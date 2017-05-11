@@ -20,6 +20,7 @@ class CreateUserInvitationsTable extends Migration
             $table->increments('id');
             $table->string('email')->unique();
             $table->string('state');
+            $table->string('token');
             $table->integer('user_id')->unsigned()->nullable();
             $table->timestamps();
         });
