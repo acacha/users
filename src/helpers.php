@@ -56,11 +56,13 @@ if (! function_exists('initialize_users_management_permissions')) {
         $manageUsers = role_first_or_create('manage-users');
         permission_first_or_create('see-manage-users-view');
         permission_first_or_create('list-users');
+        permission_first_or_create('create-users');
         permission_first_or_create('send-user-invitations');
         permission_first_or_create('list-user-invitations');
 
         give_permission_to_role($manageUsers,'see-manage-users-view');
         give_permission_to_role($manageUsers,'list-users');
+        give_permission_to_role($manageUsers,'create-users');
         give_permission_to_role($manageUsers,'send-user-invitations');
         give_permission_to_role($manageUsers,'list-user-invitations');
 

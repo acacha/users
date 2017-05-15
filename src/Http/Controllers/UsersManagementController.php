@@ -2,6 +2,7 @@
 
 namespace Acacha\Users\Http\Controllers;
 
+use Acacha\Users\Http\Requests\CreateUserRequest;
 use Acacha\Users\Http\Requests\SendInvitationRequest;
 use Acacha\Users\Models\UserInvitation;
 use App\User;
@@ -43,6 +44,19 @@ class UsersManagementController extends Controller
     {
         $this->authorize('list-users');
         return User::paginate();
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param CreateUserRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(CreateUserRequest $request)
+    {
+        User::create($request->only('name', 'email', 'password'));
+
+        return Response::json(['created' => true ]);
     }
 
 }
