@@ -2,6 +2,7 @@
 
 namespace Acacha\Users\Http\Controllers;
 
+use Acacha\Users\Events\UserCreated;
 use Acacha\Users\Http\Requests\CreateUserRequest;
 use Acacha\Users\Http\Requests\SendInvitationRequest;
 use Acacha\Users\Models\UserInvitation;
@@ -54,7 +55,9 @@ class UsersManagementController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
-        User::create($request->only('name', 'email', 'password'));
+        $user = User::create($request->only('name', 'email', 'password'));
+
+        event(new UserCreated($user));
 
         return Response::json(['created' => true ]);
     }

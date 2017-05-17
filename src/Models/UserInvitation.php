@@ -21,7 +21,7 @@ class UserInvitation extends Model implements Stateful
      *
      * @var array
      */
-    protected $fillable = ['email','state'];
+    protected $fillable = ['email','state','token'];
 
     /**
      * Transaction States
@@ -29,7 +29,7 @@ class UserInvitation extends Model implements Stateful
      * @var array
      */
     protected $states = [
-        'pending'  => ['inital' => true],
+        'pending'  => ['initial' => true],
         'accepted' => ['final' => true]
     ];
 

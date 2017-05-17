@@ -1,6 +1,7 @@
 <?php
 
 namespace Acacha\Users\Services;
+
 use Acacha\Users\Mail\UserInvitation;
 use Acacha\Users\Models\UserInvitation as UserInvitationModel;
 use Mail;

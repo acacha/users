@@ -59,12 +59,18 @@ if (! function_exists('initialize_users_management_permissions')) {
         permission_first_or_create('create-users');
         permission_first_or_create('send-user-invitations');
         permission_first_or_create('list-user-invitations');
+        permission_first_or_create('show-user-invitations');
+        permission_first_or_create('edit-user-invitations');
+        permission_first_or_create('delete-user-invitations');
 
         give_permission_to_role($manageUsers,'see-manage-users-view');
         give_permission_to_role($manageUsers,'list-users');
         give_permission_to_role($manageUsers,'create-users');
         give_permission_to_role($manageUsers,'send-user-invitations');
         give_permission_to_role($manageUsers,'list-user-invitations');
+        give_permission_to_role($manageUsers,'show-user-invitations');
+        give_permission_to_role($manageUsers,'edit-user-invitations');
+        give_permission_to_role($manageUsers,'delete-user-invitations');
 
         app(PermissionRegistrar::class)->registerPermissions();
 
