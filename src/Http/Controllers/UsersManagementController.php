@@ -62,4 +62,22 @@ class UsersManagementController extends Controller
         return Response::json(['created' => true ]);
     }
 
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy($id)
+    {
+        $this->authorize('delete-users');
+        User::destroy($id);
+
+        // NOTE : this method trigger method "created" in UserInvitationObserver. Fire also and event to enable hooking.
+//        event(new UserRemoved($user));
+
+        return Response::json(['deleted' => true ]);
+    }
+
 }
