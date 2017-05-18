@@ -1,39 +1,64 @@
 <template>
-    <div class="box box-success" id="user-invitations-list-box">
-        <div class="box-header with-border">
-            <h3 class="box-title">Invitations Lists</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+    <div id="users-invitations-list">
+        <div class="modal modal-danger" id="confirm-user-invitation-deletion-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">Confirm User Invitation deletion</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete user invitation?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" id="user_invitation_id" value=""/>
+                        <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline" id="confirm-user-invitation-deletion-button" @click="deleteUserInvitation()"><i v-if="this.deletingUserInvitation" id="deleting-user-spinner" class="fa fa-refresh fa-spin"></i>  Delete</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-            <filter-bar></filter-bar>
-            <vuetable ref="vuetable"
-                      :api-url="apiUrl"
-                      :fields="columns"
-                      pagination-path=""
-                      :css="css.table"
-                      :api-mode="true"
-                      row-class="um-user-invitation-row"
-                      :append-params="moreParams"
-                      :multi-sort="true"
-                      detail-row-component="my-detail-row"
-                      @vuetable:pagination-data="onPaginationData"
-                      @vuetable:cell-clicked="onCellClicked"
-            ></vuetable>
-            <div class="vuetable-pagination">
-                <vuetable-pagination-info ref="paginationInfo"
-                                          info-class="pagination-info"
-                                          infoTemplate="Displaying {from} to {to} of {total} invitations"
-                ></vuetable-pagination-info>
 
-                <vuetable-pagination ref="pagination"
-                                     :css="css.pagination"
-                                     :icons="css.icons"
-                                     @vuetable-pagination:change-page="onChangePage"
-                ></vuetable-pagination>
+        <div class="box box-success" v-bind:class="{ 'collapsed-box': collapsed }"  id="user-invitations-list-box">
+            <div class="box-header with-border">
+                <h3 class="box-title">Invitations Lists</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i v-if="collapsed" class="fa fa-plus"></i>
+                        <i v-else class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <filter-bar></filter-bar>
+                <vuetable ref="vuetable"
+                          :api-url="apiUrl"
+                          :fields="columns"
+                          pagination-path=""
+                          :css="css.table"
+                          :api-mode="true"
+                          row-class="um-user-invitation-row"
+                          :append-params="moreParams"
+                          :multi-sort="true"
+                          detail-row-component="my-detail-row"
+                          @vuetable:pagination-data="onPaginationData"
+                          @vuetable:cell-clicked="onCellClicked"
+                ></vuetable>
+                <div class="vuetable-pagination">
+                    <vuetable-pagination-info ref="paginationInfo"
+                                              info-class="pagination-info"
+                                              infoTemplate="Displaying {from} to {to} of {total} invitations"
+                    ></vuetable-pagination-info>
+
+                    <vuetable-pagination ref="pagination"
+                                         :css="css.pagination"
+                                         :icons="css.icons"
+                                         @vuetable-pagination:change-page="onChangePage"
+                    ></vuetable-pagination>
+                </div>
             </div>
         </div>
     </div>
@@ -45,7 +70,7 @@
 
   import FilterBar from './FilterBar'
   import DetailRow from './UserInvitationDetailRow'
-  import CustomActions from './CustomActions'
+  import UsersInvitationsListCustomActions from './UsersInvitationsListCustomActions'
   import VuetablePagination from 'vuetable-2/src/components/VuetablePagination'
   import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo'
 
@@ -54,7 +79,7 @@
 
   Vue.component('filter-bar', FilterBar)
   Vue.component('my-detail-row', DetailRow)
-  Vue.component('custom-actions', CustomActions)
+  Vue.component('user-invitations-list-custom-actions', UsersInvitationsListCustomActions)
   export default {
     components: {
       Vuetable,
@@ -65,6 +90,10 @@
       apiUrl: {
         type: String,
         default: 'http://localhost:8080/api/management/users/invitations'
+      },
+      collapsed: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -102,7 +131,7 @@
             name: 'updated_at',
           },
           {
-            name: '__component:custom-actions',
+            name: '__component:user-invitations-list-custom-actions',
             title: 'Actions',
             titleClass: 'text-center',
             dataClass: 'text-center'
@@ -128,10 +157,33 @@
             },
           }
         },
-        moreParams: {}
+        moreParams: {},
+        deletingUserInvitation : false
       }
     },
     methods: {
+      deleteUserInvitation () {
+        console.log('################################# FIT!!!!!!!!!!!')
+        this.deletingUserInvitation = true;
+        var id = document.querySelector('div#users-invitations-list div.modal div.modal-footer input#user_invitation_id').value
+        console.log('ID: ' + id)
+
+        var component = this
+        axios.delete(this.apiUrl + '/' + id)
+          .then(function (response) {
+            console.log('Ok! Reloading!')
+            component.$refs.vuetable.reload()
+            $('#confirm-user-invitation-deletion-modal').modal('hide')
+            component.deletingUserInvitation = false;
+          })
+          .catch(function (error) {
+            console.log(error);
+            component.deletingUserInvitation = false;
+          });
+      },
+      toogle () {
+          $("#user-invitations-list-box").toggleBox()
+      },
       onChangePage (page) {
         this.$refs.vuetable.changePage(page)
       },
@@ -155,7 +207,7 @@
         this.moreParams = {}
         Vue.nextTick( () => this.$refs.vuetable.refresh() )
       }
-   }
+    }
   }
 </script>
 <style>

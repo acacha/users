@@ -1,42 +1,68 @@
 <template>
-    <div class="box box-success" id="user-list-box">
-        <div class="box-header with-border">
-            <h3 class="box-title">Users Lists</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+    <div id="users-list">
+        <div class="modal modal-danger" id="confirm-user-deletion-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">Confirm User deletion</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete user?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" id="user_id" value=""/>
+                        <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline" id="confirm-user-deletion-button" @click="deleteUser()"><i v-if="this.deletingUser" id="deleting-user-spinner" class="fa fa-refresh fa-spin"></i>  Delete</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-            <filter-bar></filter-bar>
-            <vuetable ref="vuetable"
-                      :api-url="apiUrl"
-                      :fields="columns"
-                      pagination-path=""
-                      :css="css.table"
-                      :api-mode="true"
-                      row-class="um-user-row"
-                      :append-params="moreParams"
-                      :multi-sort="true"
-                      detail-row-component="my-detail-row"
-                      @vuetable:pagination-data="onPaginationData"
-                      @vuetable:cell-clicked="onCellClicked"
-            ></vuetable>
-            <div class="vuetable-pagination">
-                <vuetable-pagination-info ref="paginationInfo"
-                                          info-class="pagination-info"
-                                          infoTemplate="Displaying {from} to {to} of {total} users"
-                ></vuetable-pagination-info>
 
-                <vuetable-pagination ref="pagination"
-                                     :css="css.pagination"
-                                     :icons="css.icons"
-                                     @vuetable-pagination:change-page="onChangePage"
-                ></vuetable-pagination>
+        <div class="box box-success" id="user-list-box" :class="{ 'collapsed-box': collapsed }">
+            <div class="box-header with-border">
+                <h3 class="box-title">Users Lists</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i v-if="collapsed" class="fa fa-plus"></i>
+                        <i v-else class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <filter-bar></filter-bar>
+                <vuetable ref="vuetable"
+                          :api-url="apiUrl"
+                          :fields="columns"
+                          pagination-path=""
+                          :css="css.table"
+                          :api-mode="true"
+                          row-class="um-user-row"
+                          :append-params="moreParams"
+                          :multi-sort="true"
+                          detail-row-component="my-detail-row"
+                          @vuetable:pagination-data="onPaginationData"
+                          @vuetable:cell-clicked="onCellClicked"
+                ></vuetable>
+                <div class="vuetable-pagination">
+                    <vuetable-pagination-info ref="paginationInfo"
+                                              info-class="pagination-info"
+                                              infoTemplate="Displaying {from} to {to} of {total} users"
+                    ></vuetable-pagination-info>
+
+                    <vuetable-pagination ref="pagination"
+                                         :css="css.pagination"
+                                         :icons="css.icons"
+                                         @vuetable-pagination:change-page="onChangePage"
+                    ></vuetable-pagination>
+                </div>
             </div>
         </div>
     </div>
+
 </template>
 
 
@@ -45,7 +71,7 @@
 
   import FilterBar from './FilterBar'
   import DetailRow from './UserDetailRow'
-  import CustomActions from './CustomActions'
+  import UserListCustomActions from './UsersListCustomActions'
   import VuetablePagination from 'vuetable-2/src/components/VuetablePagination'
   import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo'
 
@@ -54,7 +80,7 @@
 
   Vue.component('filter-bar', FilterBar)
   Vue.component('my-detail-row', DetailRow)
-  Vue.component('custom-actions', CustomActions)
+  Vue.component('users-list-custom-actions', UserListCustomActions)
 
   export default {
     components: {
@@ -66,11 +92,16 @@
       apiUrl: {
         type: String,
         default: 'http://localhost:8080/api/management/users'
+      },
+      collapsed: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
       return {
-        users : [],
+        deletingUser: false,
+        userIdToDelete : null,
         columns: [
           {
             name: '__sequence',
@@ -101,7 +132,7 @@
             name: 'updated_at',
           },
           {
-            name: '__component:custom-actions',
+            name: '__component:users-list-custom-actions',
             title: 'Actions',
             titleClass: 'text-center',
             dataClass: 'text-center'
@@ -131,6 +162,21 @@
       }
     },
     methods: {
+      deleteUser () {
+        this.deletingUser = true;
+        var id = document.querySelector('div#users-list div.modal div.modal-footer input#user_id').value
+        var component = this
+        axios.delete(this.apiUrl + '/' + id)
+          .then(function (response) {
+            component.$refs.vuetable.reload()
+            $('#confirm-user-deletion-modal').modal('hide')
+            component.deletingUser = false;
+          })
+          .catch(function (error) {
+            console.log(error);
+            component.deletingUser = false;
+          });
+      },
       onChangePage (page) {
         this.$refs.vuetable.changePage(page)
       },

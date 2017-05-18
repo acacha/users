@@ -1,61 +1,61 @@
 <template>
     <div id="users-manager-panel">
-        <div class="box box-success">
-            <div class="box-header with-border">
-                <h3 class="box-title">Create User <i class="fa fa-plus"></i></h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                </div>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                <create-user :api-url="apiUrl"></create-user>
-            </div>
-        </div>
 
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <h3 class="box-title">Invitations</h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                </div>
-            </div>
-            <div class="box-body">
+        <create-user :api-url="apiUrl" :collapsed="collapseCreateUser"></create-user>
 
-                <invite-user :api-url="apiUrl  + '/invitations'"></invite-user>
+        <user-invitations :api-url="apiUrl" :collapsed="collapseUserInvitations"></user-invitations>
 
-                <users-management-user-invitations-list :api-url="apiUrl + '/invitations'"></users-management-user-invitations-list>
-
-            </div>
-        </div>
-
-        <users-management-users-list :api-url="apiUrl"></users-management-users-list>
+        <users-management-users-list :api-url="apiUrl" :collapsed="collapseUsersList"></users-management-users-list>
 
     </div>
-
 </template>
 
 <script>
 
+  import QueryString from 'query-string'
+
   import UsersManagementUsersList from './UsersList'
-  import UsersManagementUserInvitationsList from './UserInvitationsList'
-  import InviteUser from './InviteUser'
   import CreateUser from './CreateUser'
+  import UserInvitations from './UserInvitations'
 
   export default {
+    data() {
+      return {
+        collapseCreateUser : true,
+        collapseUserInvitations: false,
+        collapseUsersList : false
+      }
+    },
     components: {
       UsersManagementUsersList,
-      UsersManagementUserInvitationsList,
-      InviteUser,
-      CreateUser
+      CreateUser,
+      UserInvitations
     },
     props: {
       // a number with default value
       apiUrl: {
         type: String,
         default: 'http://localhost:8080/api/management/users'
+      }
+    },
+    methods: {
+      collapse() {
+        this.collapseCreateUser=true
+        this.collapseUserInvitations=true
+        this.collapseUsersList=true
+      },
+      expand () {
+        this.collapseCreateUser=false
+        this.collapseUserInvitations=false
+        this.collapseUsersList=false
+      }
+    },
+    mounted() {
+      if (typeof QueryString.parse(location.search).expand !== 'undefined') {
+        this.expand()
+      }
+      if (typeof QueryString.parse(location.search).collapse !== 'undefined') {
+        this.collapse()
       }
     }
   }
