@@ -47,6 +47,7 @@ trait UsersManagementTest
      *
      * @param $role
      * @param null $driver
+     * @return $this
      */
     protected function signInWithRole($role, $driver = null)
     {

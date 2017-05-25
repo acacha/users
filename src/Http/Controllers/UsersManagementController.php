@@ -4,9 +4,9 @@ namespace Acacha\Users\Http\Controllers;
 
 use Acacha\Users\Events\UserCreated;
 use Acacha\Users\Http\Requests\CreateUserRequest;
-use Acacha\Users\Http\Requests\SendInvitationRequest;
-use Acacha\Users\Models\UserInvitation;
+use Acacha\Users\Http\Requests\UpdateUserRequest;
 use App\User;
+use Illuminate\Http\Request;
 use Response;
 
 /**
@@ -30,10 +30,21 @@ class UsersManagementController extends Controller
      *
      * @return Response
      */
-    public function web()
+    public function users()
     {
         $this->authorize('see-manage-users-view');
         return view('acacha_users::managment');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return Response
+     */
+    public function userInvitations()
+    {
+        $this->authorize('see-manage-user-invitations-view');
+        return view('acacha_users::managment-invitations');
     }
 
     /**
@@ -78,6 +89,32 @@ class UsersManagementController extends Controller
 //        event(new UserRemoved($user));
 
         return Response::json(['deleted' => true ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $this->authorize('view-users');
+        return User::find($id);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param UpdateUserRequest $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(UpdateUserRequest $request, $id)
+    {
+        $user = User::find($id);
+        $user->update($request->intersect(['email','name','password']));
+        return Response::json(['updated' => true ]);
     }
 
 }

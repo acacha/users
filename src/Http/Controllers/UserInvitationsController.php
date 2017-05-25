@@ -4,6 +4,7 @@ namespace Acacha\Users\Http\Controllers;
 
 use Acacha\Users\Events\UserInvited;
 use Acacha\Users\Http\Requests\SendInvitationRequest;
+use Acacha\Users\Http\Requests\UpdateInvitationRequest;
 use Acacha\Users\Models\UserInvitation;
 use Illuminate\Http\Request;
 use Response;
@@ -84,20 +85,19 @@ class UserInvitationsController extends Controller
      */
     public function show($id)
     {
-        $this->authorize('show-user-invitations');
+        $this->authorize('view-user-invitations');
         return UserInvitation::find($id);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param UpdateInvitationRequest $request
+     * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(UpdateInvitationRequest $request, $id)
     {
-        $this->authorize('edit-user-invitations');
         $invitation = UserInvitation::find($id);
         $invitation->update($request->intersect(['email','state','token']));
         return Response::json(['updated' => true ]);

@@ -33,20 +33,22 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-                <filter-bar></filter-bar>
-                <vuetable ref="vuetable"
-                          :api-url="apiUrl"
-                          :fields="columns"
-                          pagination-path=""
-                          :css="css.table"
-                          :api-mode="true"
-                          row-class="um-user-invitation-row"
-                          :append-params="moreParams"
-                          :multi-sort="true"
-                          detail-row-component="my-detail-row"
-                          @vuetable:pagination-data="onPaginationData"
-                          @vuetable:cell-clicked="onCellClicked"
-                ></vuetable>
+                <filter-bar></filter-bar>BBBBBBBBB
+                <div class="table-responsive">
+                    <vuetable ref="vuetable"
+                              :api-url="apiUrl"
+                              :fields="columns"
+                              pagination-path=""
+                              :css="css.table"
+                              :api-mode="true"
+                              row-class="um-user-invitation-row"
+                              :append-params="moreParams"
+                              :multi-sort="true"
+                              detail-row-component="my-detail-row"
+                              @vuetable:pagination-data="onPaginationData"
+                              @vuetable:cell-clicked="onCellClicked"
+                    ></vuetable>
+                </div>
                 <div class="vuetable-pagination">
                     <vuetable-pagination-info ref="paginationInfo"
                                               info-class="pagination-info"

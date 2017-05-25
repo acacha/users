@@ -54,23 +54,36 @@ if (! function_exists('initialize_users_management_permissions')) {
     function initialize_users_management_permissions()
     {
         $manageUsers = role_first_or_create('manage-users');
+
+        //USERS
         permission_first_or_create('see-manage-users-view');
         permission_first_or_create('list-users');
         permission_first_or_create('create-users');
+        permission_first_or_create('view-users');
+        permission_first_or_create('edit-users');
         permission_first_or_create('delete-users');
-        permission_first_or_create('send-user-invitations');
+
+        //USER INVITATIONS
+        permission_first_or_create('see-manage-user-invitations-view');
         permission_first_or_create('list-user-invitations');
-        permission_first_or_create('show-user-invitations');
+        permission_first_or_create('send-user-invitations');
+        //TODO diferences between send and create user invitations?
+        //permission_first_or_create('create-user-invitations');
+        permission_first_or_create('view-user-invitations');
         permission_first_or_create('edit-user-invitations');
         permission_first_or_create('delete-user-invitations');
 
         give_permission_to_role($manageUsers,'see-manage-users-view');
         give_permission_to_role($manageUsers,'list-users');
         give_permission_to_role($manageUsers,'create-users');
+        give_permission_to_role($manageUsers,'view-users');
+        give_permission_to_role($manageUsers,'edit-users');
         give_permission_to_role($manageUsers,'delete-users');
-        give_permission_to_role($manageUsers,'send-user-invitations');
+
+        give_permission_to_role($manageUsers,'see-manage-user-invitations-view');
         give_permission_to_role($manageUsers,'list-user-invitations');
-        give_permission_to_role($manageUsers,'show-user-invitations');
+        give_permission_to_role($manageUsers,'send-user-invitations');
+        give_permission_to_role($manageUsers,'view-user-invitations');
         give_permission_to_role($manageUsers,'edit-user-invitations');
         give_permission_to_role($manageUsers,'delete-user-invitations');
 

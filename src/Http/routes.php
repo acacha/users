@@ -6,20 +6,26 @@
  * RouteServiceProvider
  */
 Route::group(['middleware' => 'web'], function () {
-    Route::get('/management/users', 'UsersManagementController@web');
+    Route::get('/management/users', 'UsersManagementController@users');
+    Route::get('/management/users/invitations', 'UsersManagementController@userInvitations');
 });
 
 Route::group(['middleware' => 'api','prefix' => 'api/v1'], function () {
     Route::group(['middleware' => 'auth:api'], function() {
+        //USERS
         Route::get('/management/users', 'UsersManagementController@index');
         Route::post('/management/users', 'UsersManagementController@store');
+        Route::get('/management/users/{User}', 'UsersManagementController@show');
         Route::delete('/management/users/{User}', 'UsersManagementController@destroy');
+        Route::put('/management/users/{User}', 'UsersManagementController@update');
+
+        //USER INVITATIONS
+        Route::get('/management/users-invitations', 'UserInvitationsController@index');
         //Send and store are the same: emails are sent when new user invitation is stored in database using eloquent events
-        Route::post('/management/users/invitations/send', 'UserInvitationsController@sendInvitation');
-        Route::post('/management/users/invitations', 'UserInvitationsController@store');
-        Route::get('/management/users/invitations', 'UserInvitationsController@index');
-        Route::get('/management/users/invitations/{UserInvitation}', 'UserInvitationsController@show');
-        Route::delete('/management/users/invitations/{UserInvitation}', 'UserInvitationsController@destroy');
-        Route::put('/management/users/invitations/{UserInvitation}', 'UserInvitationsController@update');
+        Route::post('/management/users-invitations/send', 'UserInvitationsController@sendInvitation');
+        Route::post('/management/users-invitations', 'UserInvitationsController@store');
+        Route::get('/management/users-invitations/{UserInvitation}', 'UserInvitationsController@show');
+        Route::delete('/management/users-invitations/{UserInvitation}', 'UserInvitationsController@destroy');
+        Route::put('/management/users-invitations/{UserInvitation}', 'UserInvitationsController@update');
     });
 });
