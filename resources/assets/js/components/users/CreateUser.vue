@@ -57,7 +57,7 @@
     </div>
 </template>
 
-<style src="./fade.css"></style>
+<style src="./css/fade.css"></style>
 
 <script>
 
@@ -84,7 +84,7 @@
         const API_URL = this.apiUrl
         this.form.post(API_URL)
           .then(response => {
-            console.log('Invited ok')
+            console.log('User Invited correctly')
           })
           .catch(error => {
             console.log('Invited error: ' + error)

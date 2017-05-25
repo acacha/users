@@ -109,13 +109,13 @@ class UsersManagementTest extends TestCase
      *
      * @test
      */
-    public function api_show__an_user_for_authorized_users_correctly()
+    public function api_show_an_user_for_authorized_users_correctly()
     {
         $this->signInAsUserManager('api')
             ->json('GET', '/api/v1/management/users')
             ->assertStatus(200)
 
-            ->assertExactJson([
+            ->assertJson([
                 'current_page' => 1,
                 'data' => [
                     ['id'=> Auth::user()->id,
@@ -140,7 +140,7 @@ class UsersManagementTest extends TestCase
      *
      * @test
      */
-    public function api_show__all_users_for_authorized_users_with_correct_structure()
+    public function api_show_all_users_for_authorized_users_with_correct_structure()
     {
         factory('App\User',10)->create();
         $this->signInAsUserManager('api')
@@ -191,6 +191,35 @@ class UsersManagementTest extends TestCase
      *
      * @test
      */
+    public function api_create_user()
+    {
+        $faker = Factory::create();
+
+        $this->publishFactories();
+        $this->signInAsUserManager('api');
+        Event::fake();
+        $response = $this->post_user_creation($name = $faker->name,
+            $email = $faker->unique()->safeEmail, 'secret');
+
+        $this->assertDatabaseHas('users', [
+            'name' => $name,
+            'email' => $email
+        ]);
+
+        Event::assertDispatched(UserCreated::class, function ($e) use ($name,$email) {
+            return $e->user->name === $name && $e->user->email === $email;
+        });
+
+        $response->assertStatus(200)
+            ->assertExactJson([ 'created' => true ]);
+
+    }
+
+    /**
+     * Api create user.
+     *
+     * @test
+     */
     public function api_create_user_check_validations()
     {
         $faker = Factory::create();
@@ -227,33 +256,189 @@ class UsersManagementTest extends TestCase
         ]);
     }
 
+    /**
+     * Show user.
+     *
+     * @param $id
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    private function show_user($id) {
+        return $this->json('GET','api/v1/management/users/' . $id);
+    }
 
     /**
-     * Api create user.
+     * Unauthenticated users cannot show user invitations.
      *
      * @test
      */
-    public function api_create_user()
+    public function unauthenticated_users_cannot_show_user() {
+        $response = $this->show_user(1);
+        $response->assertStatus(401);
+    }
+
+    /**
+     * Unauthorized users cannot show user invitations.
+     *
+     * @test
+     */
+    public function unauthorized_users_cannot_show_user() {
+        $this->signIn(null,'api');
+        $response = $this->show_user(1);
+        $response->assertStatus(403);
+    }
+
+    /**
+     * Api show user.
+     *
+     * @test
+     */
+    public function api_show_user()
     {
-        $faker = Factory::create();
-
-        $this->publishFactories();
+        $user = $this->createUser();
         $this->signInAsUserManager('api');
-        Event::fake();
-        $response = $this->post_user_creation($name = $faker->name,
-            $email = $faker->unique()->safeEmail, 'secret');
+        $response = $this->show_user($user->id);
+        $response->assertStatus(200)
+            ->assertJson([
+                'id'=> $user->id,
+                'name' =>  $user->name,
+                'email' => $user->email,
+                'created_at' => $user->created_at->toDateTimeString(),
+                'updated_at' => $user->updated_at->toDateTimeString()
+            ]);
+    }
 
-        $this->assertDatabaseHas('users', [
-            'name' => $name,
-            'email' => $email
-        ]);
+    /**
+     * Edit user.
+     *
+     * @param $id
+     * @param array $data
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    private function edit_user($id , $data) {
+        return $this->json('PUT','api/v1/management/users/' . $id , $data);
+    }
 
-        Event::assertDispatched(UserCreated::class, function ($e) use ($name,$email) {
-            return $e->user->name === $name && $e->user->email === $email;
-        });
+    /**
+     * Unauthenticated users cannot edit users.
+     *
+     * @test
+     */
+    public function unauthenticated_users_cannot_edit_users() {
+        $response = $this->edit_user(1,[]);
+        $response->assertStatus(401);
+    }
+
+    /**
+     * Unauthorized users cannot edit users.
+     *
+     * @test
+     */
+    public function unauthorized_users_cannot_edit_users() {
+        $this->signIn(null,'api');
+        $response = $this->edit_user(1, []);
+        $response->assertStatus(403);
+    }
+
+    /**
+     * Api edit users.
+     *
+     * @test
+     */
+    public function api_edit_users() {
+
+        $user = $this->createUser();
+        $this->signInAsUserManager('api');
+        $faker = Factory::create();
+        $response = $this->edit_user($user->id, [ 'email' => $faker->email , 'name' => $faker->name]);
+        $response->assertStatus(200)
+            ->assertJson([
+                'updated' => true,
+            ]);
+    }
+
+    /**
+     * Api edit users check validation.
+     *
+     * @test
+     */
+    public function api_edit_users_check_validation() {
+
+        $user = $this->createUser();
+        $userAlreadyExisting = $this->createUser();
+
+        $this->signInAsUserManager('api');
+
+        //NAME
+        $response = $this->edit_user($user->id, [ 'name' => '']);
+        $this->assertResponseValidation($response,422,'name','The name field is required.');
+
+        $response = $this->edit_user($user->id, [ 'name' => str_random(256)]);
+        $this->assertResponseValidation($response,422,'name','The name may not be greater than 255 characters.');
+
+        //EMAIL
+        $response = $this->edit_user($user->id, [ 'email' => '']);
+        $this->assertResponseValidation($response,422,'email','The email field is required.');
+
+        $response = $this->edit_user($user->id, [ 'email' => 'prova']);
+        $this->assertResponseValidation($response,422,'email','The email must be a valid email address.');
+
+        $response = $this->edit_user($user->id, [ 'email' => $userAlreadyExisting->email]);
+        $this->assertResponseValidation($response,422,'email','The email has already been taken.');
+
+    }
+
+    /**
+     * Delete user.
+     *
+     * @param $id
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    private function delete_user($id) {
+        return $this->json('DELETE','api/v1/management/users/' . $id);
+    }
+
+    /**
+     * Unauthenticated users cannot delete users.
+     *
+     * @test
+     */
+    public function unauthenticated_users_cannot_delete_users() {
+        $response = $this->delete_user(1);
+        $response->assertStatus(401);
+    }
+
+    /**
+     * Unauthorized users cannot delete users.
+     *
+     * @test
+     */
+    public function unauthorized_users_cannot_delete_users() {
+        $this->signIn(null,'api');
+        $response = $this->delete_user(1);
+        $response->assertStatus(403);
+    }
+
+    /**
+     * Api delete user.
+     *
+     * @test
+     */
+    public function api_delete_user()
+    {
+        $user = $this->createUser();
+
+        $this->signInAsUserManager('api');
+
+        $response = $this->delete_user($user->id);
 
         $response->assertStatus(200)
-            ->assertExactJson([ 'created' => true ]);
+            ->assertJson([
+                'deleted' => true,
+            ]);
+
+        $this->assertDatabaseMissing('users', [
+            'id' => $user->id
+        ]);
 
     }
 
@@ -279,7 +464,7 @@ class UsersManagementTest extends TestCase
      */
     public function guest_users_cannot_sent_user_invitations()
     {
-        $response = $this->post('/api/v1/management/users/invitations/send');
+        $response = $this->post('/api/v1/management/users-invitations/send');
 
         $response->assertStatus(302);
     }
@@ -292,7 +477,7 @@ class UsersManagementTest extends TestCase
     public function users_without_authorization_cant_sent_user_invitations()
     {
         $this->signIn(null,'api');
-        $response = $this->post('/api/v1/management/users/invitations/send');
+        $response = $this->post('/api/v1/management/users-invitations/send');
         $response->assertStatus(403);
     }
 
@@ -316,7 +501,6 @@ class UsersManagementTest extends TestCase
 
         $response = $this->post_user_invitation(['email' => 'sdsfsdfsfdsdfe@dadddaasdasdaseqwerqwqqweqwqwewqeqweeqwsqweawedqweqweqweawerwaerwearwerw.com']);
         $this->assertResponseValidationEmail($response,422,'The email must be a valid email address.');
-
     }
 
     /**
@@ -326,7 +510,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function post_user_invitation($data){
-        return $this->json('POST','/api/v1/management/users/invitations/send', $data);
+        return $this->json('POST','/api/v1/management/users-invitations/send', $data);
     }
 
     /**
@@ -414,7 +598,7 @@ class UsersManagementTest extends TestCase
      */
     public function guest_users_cannot_see_user_invitations()
     {
-        $response = $this->json('GET','/api/v1/management/users/invitations');
+        $response = $this->json('GET','/api/v1/management/users-invitations');
         $response->assertStatus(401);
     }
 
@@ -426,7 +610,7 @@ class UsersManagementTest extends TestCase
     public function users_without_authorization_cannot_see_user_invitations()
     {
         $this->signIn(null,'api');
-        $response = $this->json('GET','/api/v1/management/users/invitations');
+        $response = $this->json('GET','/api/v1/management/users-invitations');
         $response->assertStatus(403);
     }
 
@@ -437,7 +621,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function delete_user_invitation($id) {
-        return $this->json('DELETE','api/v1/management/users/invitations/' . $id);
+        return $this->json('DELETE','api/v1/management/users-invitations/' . $id);
     }
 
     /**
@@ -491,7 +675,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function show_user_invitation($id) {
-        return $this->json('GET','api/v1/management/users/invitations/' . $id);
+        return $this->json('GET','api/v1/management/users-invitations/' . $id);
     }
 
     /**
@@ -516,6 +700,26 @@ class UsersManagementTest extends TestCase
     }
 
     /**
+     * Api show user invitation.
+     *
+     * @test
+     */
+    public function api_show_user_invitation()
+    {
+        $invitation = $this->createUserInvitations();
+        $this->signInAsUserManager('api');
+        $response = $this->show_user_invitation($invitation->id);
+        $response->assertStatus(200)
+            ->assertJson([
+                'id'=> $invitation->id,
+                'email' => $invitation->email,
+                'state' => $invitation->state,
+                'created_at' => $invitation->created_at->toDateTimeString(),
+                'updated_at' => $invitation->updated_at->toDateTimeString()
+            ]);
+    }
+
+    /**
      * Edit user invitation.
      *
      * @param $id
@@ -523,7 +727,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function edit_user_invitation($id , $data) {
-        return $this->json('PUT','api/v1/management/users/invitations/' . $id , $data);
+        return $this->json('PUT','api/v1/management/users-invitations/' . $id , $data);
     }
 
     /**
@@ -548,22 +752,62 @@ class UsersManagementTest extends TestCase
     }
 
     /**
-     * Api show user invitations.
+     * Api edit user invitations.
      *
      * @test
      */
-    public function api_show_user_invitations() {
+    public function api_edit_user_invitations() {
 
         $invitation = $this->createUserInvitations();
 
         $this->signInAsUserManager('api');
         $faker = Factory::create();
-        $response = $this->edit_user_invitation($invitation->id, [ 'email' => $faker->email]);
+        $response = $this->edit_user_invitation($invitation->id, [ 'email' => $faker->email , 'state' => 'accepted']);
         $response->assertStatus(200)
             ->assertJson([
                 'updated' => true,
             ]);
+    }
 
+    /**
+     * Api edit user invitations check validation.
+     *
+     * @test
+     */
+    public function api_edit_user_invitations_check_validation() {
+
+        $invitation = $this->createUserInvitations();
+
+        $this->signInAsUserManager('api');
+        $user = $this->createUser();
+
+        //EMAIL
+        $response = $this->edit_user_invitation($invitation->id, [ 'email' => '']);
+        $this->assertResponseValidation($response,422,'email','The email field is required.');
+
+        $response = $this->edit_user_invitation($invitation->id, [ 'email' => 'prova']);
+        $this->assertResponseValidation($response,422,'email','The email must be a valid email address.');
+
+        $response = $this->edit_user_invitation($invitation->id, [ 'email' => $user->email]);
+        $this->assertResponseValidation($response,422,'email','The email has already been taken.');
+
+        //STATE
+        $response = $this->edit_user_invitation($invitation->id, [ 'state' => '']);
+        $this->assertResponseValidation($response,422,'state','The state field is required.');
+
+        $response = $this->edit_user_invitation($invitation->id, [ 'state' => 'invalidstate']);
+        $this->assertResponseValidation($response,422,'state','The selected state is invalid.');
+
+    }
+
+    /**
+     * Create user.
+     *
+     * @param null $num
+     * @return mixed
+     */
+    private function createUser($num = null) {
+        return factory(User::class,$num)->create();
     }
 
     /**
@@ -575,6 +819,7 @@ class UsersManagementTest extends TestCase
     private function createUserInvitations($num = null) {
         return factory(UserInvitationModel::class,$num)->create();
     }
+
     /**
      * Api list user invitations
      *
@@ -585,7 +830,7 @@ class UsersManagementTest extends TestCase
         $this->publishFactories();
         $this->createUserInvitations(10);
         $this->signInAsUserManager('api');
-        $response = $this->json('GET','/api/v1/management/users/invitations');
+        $response = $this->json('GET','/api/v1/management/users-invitations');
         $response->assertStatus(200)
             ->assertJsonStructure(['data' => [
             '*' => [

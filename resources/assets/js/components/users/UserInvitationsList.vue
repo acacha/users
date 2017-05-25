@@ -1,5 +1,7 @@
 <template>
     <div id="users-invitations-list">
+
+        <!-- TODO Modal adminlte-->
         <div class="modal modal-danger" id="confirm-user-invitation-deletion-modal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -14,12 +16,13 @@
                     <div class="modal-footer">
                         <input type="hidden" id="user_invitation_id" value=""/>
                         <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline" id="confirm-user-invitation-deletion-button" @click="deleteUserInvitation()"><i v-if="this.deletingUserInvitation" id="deleting-user-spinner" class="fa fa-refresh fa-spin"></i>  Delete</button>
+                        <button type="button" class="btn btn-outline" id="confirm-user-invitation-deletion-button" @click="deleteResource()"><i v-if="this.deleting" id="deleting-user-spinner" class="fa fa-refresh fa-spin"></i>  Delete</button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!--TODO adminlte box component-->
         <div class="box box-success" v-bind:class="{ 'collapsed-box': collapsed }"  id="user-invitations-list-box">
             <div class="box-header with-border">
                 <h3 class="box-title">Invitations Lists</h3>
@@ -33,7 +36,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-                <filter-bar></filter-bar>BBBBBBBBB
+                <filter-bar></filter-bar>
                 <div class="table-responsive">
                     <vuetable ref="vuetable"
                               :api-url="apiUrl"
@@ -44,11 +47,14 @@
                               row-class="um-user-invitation-row"
                               :append-params="moreParams"
                               :multi-sort="true"
-                              detail-row-component="my-detail-row"
+                              detail-row-component="user-invitations-detail-row"
                               @vuetable:pagination-data="onPaginationData"
                               @vuetable:cell-clicked="onCellClicked"
+                              @vuetable:loading="showLoader"
+                              @vuetable:loaded="hideLoader"
                     ></vuetable>
                 </div>
+
                 <div class="vuetable-pagination">
                     <vuetable-pagination-info ref="paginationInfo"
                                               info-class="pagination-info"
@@ -62,6 +68,9 @@
                     ></vuetable-pagination>
                 </div>
             </div>
+            <div class="overlay" v-if="loading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
         </div>
     </div>
 </template>
@@ -70,19 +79,27 @@
 <script>
   import Vuetable from 'vuetable-2/src/components/Vuetable'
 
-  import FilterBar from './FilterBar'
+  import UserInvitationsListFilterBar from './UserInvitationsListFilterBar'
   import DetailRow from './UserInvitationDetailRow'
-  import UsersInvitationsListCustomActions from './UsersInvitationsListCustomActions'
+  import UserInvitationsListCustomActions from './UserInvitationsListCustomActions'
   import VuetablePagination from 'vuetable-2/src/components/VuetablePagination'
   import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo'
 
   import VueEvents from 'vue-events'
   Vue.use(VueEvents)
 
-  Vue.component('filter-bar', FilterBar)
-  Vue.component('my-detail-row', DetailRow)
-  Vue.component('user-invitations-list-custom-actions', UsersInvitationsListCustomActions)
+  Vue.component('filter-bar', UserInvitationsListFilterBar)
+  Vue.component('user-invitations-detail-row', DetailRow)
+  Vue.component('user-invitations-list-custom-actions', UserInvitationsListCustomActions)
+
+  import User from './mixins/User'
+
+  import store from './Store'
+
   export default {
+    mixins: [
+      User
+    ],
     components: {
       Vuetable,
       VuetablePagination,
@@ -100,7 +117,8 @@
     },
     data() {
       return {
-        users : [],
+        loading: false,
+        deleting : false,
         columns: [
           {
             name: '__sequence',
@@ -160,27 +178,42 @@
           }
         },
         moreParams: {},
-        deletingUserInvitation : false
       }
     },
     methods: {
-      deleteUserInvitation () {
-        console.log('################################# FIT!!!!!!!!!!!')
-        this.deletingUserInvitation = true;
+      reload() {
+        this.$refs.vuetable.reload()
+      },
+      refresh() {
+        this.$refs.vuetable.refresh()
+      },
+      detailRowEditing(id, editing) {
+        if (!this.$refs.vuetable.isVisibleDetailRow(id)) {
+          store.editing[id] = editing
+        }
+        this.$refs.vuetable.toggleDetailRow(id)
+      },
+      showDeleteResourceDialog(id) {
+        $('#confirm-user-deletion-modal').on('show.bs.modal', function (event) {
+          var modal = $(this)
+          modal.find('.modal-footer input#user_id').val(id)
+        })
+        $('#confirm-user-deletion-modal').modal('show')
+      },
+      deleteResource () {
+        this.deleting = true;
         var id = document.querySelector('div#users-invitations-list div.modal div.modal-footer input#user_invitation_id').value
-        console.log('ID: ' + id)
 
         var component = this
         axios.delete(this.apiUrl + '/' + id)
           .then(function (response) {
-            console.log('Ok! Reloading!')
             component.$refs.vuetable.reload()
             $('#confirm-user-invitation-deletion-modal').modal('hide')
-            component.deletingUserInvitation = false;
+            component.deleting = false;
           })
           .catch(function (error) {
             console.log(error);
-            component.deletingUserInvitation = false;
+            component.deleting = false;
           });
       },
       toogle () {
@@ -196,56 +229,38 @@
       onCellClicked (data, field, event) {
         console.log('cellClicked: ', field.name)
         this.$refs.vuetable.toggleDetailRow(data.id)
+      },
+      showLoader() {
+        this.loading = true
+      },
+      hideLoader() {
+        this.loading = false
       }
     },
     events: {
-      'filter-set' (filterText) {
+      'filter-set-user-invitations-list' (filterText) {
         this.moreParams = {
           filter: filterText
         }
-        Vue.nextTick( () => this.$refs.vuetable.refresh() )
+        Vue.nextTick(() => this.refresh())
       },
-      'filter-reset' () {
+      'filter-reset-user-invitations-list' () {
         this.moreParams = {}
-        Vue.nextTick( () => this.$refs.vuetable.refresh() )
+        Vue.nextTick(() => this.refresh())
+      },
+      'reload-user-invitations-list' () {
+        Vue.nextTick(() => this.reload())
+      },
+      'show-delete-user-invitations-dialog' (id) {
+        this.showDeleteResourceDialog(id)
+      },
+      'toogle-show-user-invitations' (id) {
+        this.detailRowEditing(id,false)
+      },
+      'toogle-edit-user-invitations' (id) {
+        this.detailRowEditing(id,true)
       }
     }
   }
 </script>
-<style>
-    .pagination {
-        margin: 0;
-        float: right;
-    }
-    .pagination a.page {
-        border: 1px solid lightgray;
-        border-radius: 3px;
-        padding: 5px 10px;
-        margin-right: 2px;
-    }
-    .pagination a.page.active {
-        color: white;
-        background-color: #337ab7;
-        border: 1px solid lightgray;
-        border-radius: 3px;
-        padding: 5px 10px;
-        margin-right: 2px;
-    }
-    .pagination a.btn-nav {
-        border: 1px solid lightgray;
-        border-radius: 3px;
-        padding: 5px 7px;
-        margin-right: 2px;
-    }
-    .pagination a.btn-nav.disabled {
-        color: lightgray;
-        border: 1px solid lightgray;
-        border-radius: 3px;
-        padding: 5px 7px;
-        margin-right: 2px;
-        cursor: not-allowed;
-    }
-    .pagination-info {
-        float: left;
-    }
-</style>
+<style src="./css/pagination.css"></style>

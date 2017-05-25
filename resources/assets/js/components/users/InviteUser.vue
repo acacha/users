@@ -23,7 +23,7 @@
     </div>
 </template>
 
-<style src="./fade.css"></style>
+<style src="./css/fade.css"></style>
 
 <script>
 

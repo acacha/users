@@ -12,9 +12,9 @@
         </div>
         <div class="box-body">
 
-            <invite-user :api-url="apiUrl  + '/invitations'"></invite-user>
+            <invite-user :api-url="apiUrl  + '-invitations'"></invite-user>
 
-            <users-management-user-invitations-list :api-url="apiUrl + '/invitations'" :collapsed="collapseUserInvitationsList"></users-management-user-invitations-list>
+            <users-management-user-invitations-list :api-url="apiUrl + '-invitations'" :collapsed="collapseUserInvitationsList"></users-management-user-invitations-list>
 
         </div>
     </div>
@@ -30,7 +30,7 @@
   export default {
     data() {
       return {
-        collapseUserInvitationsList : true
+        collapseUserInvitationsList : this.collapsedList
       }
     },
     components: {
@@ -40,11 +40,15 @@
     props: {
       apiUrl: {
         type: String,
-        default: 'http://localhost:8080/api/management/users/invitations'
+        default: 'http://localhost:8080/api/management/users-invitations'
       },
       collapsed: {
         type: Boolean,
         default: false
+      },
+      collapsedList: {
+        type: Boolean,
+        default: true
       }
     },
     methods: {

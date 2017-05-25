@@ -5,7 +5,7 @@
 
         <user-invitations :api-url="apiUrl" :collapsed="collapseUserInvitations"></user-invitations>
 
-        <users-management-users-list :api-url="apiUrl" :collapsed="collapseUsersList"></users-management-users-list>
+        <users-list :api-url="apiUrl" :collapsed="collapseUsersList"></users-list>
 
     </div>
 </template>
@@ -14,20 +14,23 @@
 
   import QueryString from 'query-string'
 
-  import UsersManagementUsersList from './UsersList'
+  import UsersList from './UsersList'
   import CreateUser from './CreateUser'
   import UserInvitations from './UserInvitations'
+
+  import store from './Store';
 
   export default {
     data() {
       return {
+        store : store,
         collapseCreateUser : true,
         collapseUserInvitations: false,
         collapseUsersList : false
       }
     },
     components: {
-      UsersManagementUsersList,
+      UsersList,
       CreateUser,
       UserInvitations
     },
@@ -35,7 +38,7 @@
       // a number with default value
       apiUrl: {
         type: String,
-        default: 'http://localhost:8080/api/management/users'
+        default: 'http://localhost:8080/api/v1/management/users'
       }
     },
     methods: {
@@ -51,6 +54,7 @@
       }
     },
     mounted() {
+      this.store.apiUrl = this.apiUrl
       if (typeof QueryString.parse(location.search).expand !== 'undefined') {
         this.expand()
       }
