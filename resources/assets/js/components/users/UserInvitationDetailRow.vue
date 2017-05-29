@@ -15,7 +15,7 @@
       <strong><i class="fa fa-envelope margin-r-5"></i> Email</strong>
 
       <p class="text-muted">
-        <editable resource="user-invitation" :id="rowData.id" :edit="editing" :content="rowData.email" name="email" :api-url="apiUrl" reload-event="reload-user-invitations-list"></editable>
+        <editable resource="user-invitation" :id="rowData.id" :edit="editing" :content="rowData.email" name="email" :api-url="apiUrl" after-save-event="reload-user-invitations-list"></editable>
       </p>
 
       <hr>
@@ -24,7 +24,7 @@
 
       <p class="text-muted">
         <!--TODO Dropdown with possible values!-->
-        <editable resource="user-invitation" :id="rowData.id" :edit="editing" :content="rowData.state" name="state" :api-url="apiUrl" reload-event="reload-user-invitations-list"></editable>
+        <editable resource="user-invitation" :id="rowData.id" :edit="editing" :content="rowData.state" name="state" :api-url="apiUrl" after-save-event="reload-user-invitations-list"></editable>
       </p>
 
       <hr>

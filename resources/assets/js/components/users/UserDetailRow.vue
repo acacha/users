@@ -15,7 +15,7 @@
       <strong><i class="fa fa-user margin-r-5"></i> Name</strong>
 
       <p class="text-muted">
-        <editable resource="user" :id="rowData.id" :edit="editing" :content="rowData.name" name="name" :api-url="apiUrl" reload-event="reload-users-list"></editable>
+        <editable resource="user" :id="rowData.id" :edit="editing" :content="rowData.name" name="name" :api-url="apiUrl" after-save-event="reload-users-list"></editable>
       </p>
 
       <hr>
@@ -23,7 +23,7 @@
       <strong><i class="fa fa-envelope margin-r-5"></i> Email</strong>
 
       <p class="text-muted">
-        <editable resource="user" :id="rowData.id" :edit="editing" :content="rowData.email" name="email" :api-url="apiUrl" reload-event="reload-users-list"></editable>
+        <editable resource="user" :id="rowData.id" :edit="editing" :content="rowData.email" name="email" :api-url="apiUrl" after-save-event="reload-users-list"></editable>
       </p>
 
       <hr>
