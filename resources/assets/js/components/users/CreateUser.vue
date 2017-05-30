@@ -1,59 +1,45 @@
 <template>
     <div id="add-user">
-        <div class="box box-success" v-bind:class="{ 'collapsed-box': collapsed }">
-            <div class="box-header with-border">
-                <h3 class="box-title">Create User <i class="fa fa-plus"></i></h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                        <i v-if="collapsed" class="fa fa-plus"></i>
-                        <i v-else class="fa fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                </div>
+        <adminlte-vue-box color="success" :collapsed="isCollapsed">
+            <span slot="title">Create User</span>
+            <div class="alert alert-success alert-dismissible" v-show="form.succeeded" id="create-user-result">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <strong>User created!</strong> <br>
             </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-
-                <div class="alert alert-success alert-dismissible" v-show="form.succeeded" id="create-user-result">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <strong>User created!</strong> <br>
+            <form role="form" id="create-user-form" @submit.prevent="submit" @keydown="clearErrors($event.target.name)">
+                <div class="box-body">
+                    <div class="form-group" :class="{ 'has-error': form.errors.has('name') }">
+                        <label for="inputCreateUserName">Name</label>
+                        <input type="text" class="form-control" id="inputCreateUserName" placeholder="Enter name"
+                               name="name" value="" v-model="form.name">
+                        <transition name="fade">
+                            <span class="help-block" id="errorForInputCreateUserName" v-if="form.errors.has('name')" v-text="form.errors.get('name')"></span>
+                        </transition>
+                    </div>
+                    <div class="form-group" :class="{ 'has-error': form.errors.has('email') }">
+                        <label for="inputCreateUserEmail">Email address</label>
+                        <input type="email" class="form-control" id="inputCreateUserEmail" placeholder="Enter email"
+                               name="email" value="" v-model="form.email">
+                        <transition name="fade">
+                            <span class="help-block" id="errorForInputCreateUserEmail" v-if="form.errors.has('email')" v-text="form.errors.get('email')"></span>
+                        </transition>
+                    </div>
+                    <div class="form-group" :class="{ 'has-error': form.errors.has('password') }">
+                        <label for="inputCreateUserPassword">Password</label>
+                        <input type="password" class="form-control" id="inputCreateUserPassword" placeholder="Password"
+                               name="password" value="" v-model="form.password">
+                        <transition name="fade">
+                            <span class="help-block" id="errorForInputCreateUserPassword" v-if="form.errors.has('password')" v-text="form.errors.get('password')"></span>
+                        </transition>
+                    </div>
                 </div>
-                <form role="form" id="create-user-form" @submit.prevent="submit" @keydown="clearErrors($event.target.name)">
-                    <div class="box-body">
-                        <div class="form-group" :class="{ 'has-error': form.errors.has('name') }">
-                            <label for="inputCreateUserName">Name</label>
-                            <input type="text" class="form-control" id="inputCreateUserName" placeholder="Enter name"
-                                   name="name" value="" v-model="form.name">
-                            <transition name="fade">
-                                <span class="help-block" id="errorForInputCreateUserName" v-if="form.errors.has('name')" v-text="form.errors.get('name')"></span>
-                            </transition>
-                        </div>
-                        <div class="form-group" :class="{ 'has-error': form.errors.has('email') }">
-                            <label for="inputCreateUserEmail">Email address</label>
-                            <input type="email" class="form-control" id="inputCreateUserEmail" placeholder="Enter email"
-                                   name="email" value="" v-model="form.email">
-                            <transition name="fade">
-                                <span class="help-block" id="errorForInputCreateUserEmail" v-if="form.errors.has('email')" v-text="form.errors.get('email')"></span>
-                            </transition>
-                        </div>
-                        <div class="form-group" :class="{ 'has-error': form.errors.has('password') }">
-                            <label for="inputCreateUserPassword">Password</label>
-                            <input type="password" class="form-control" id="inputCreateUserPassword" placeholder="Password"
-                                   name="password" value="" v-model="form.password">
-                            <transition name="fade">
-                                <span class="help-block" id="errorForInputCreateUserPassword" v-if="form.errors.has('password')" v-text="form.errors.get('password')"></span>
-                            </transition>
-                        </div>
-                    </div>
-                    <!-- /.box-body -->
+                <!-- /.box-body -->
 
-                    <div class="box-footer">
-                        <button type="submit" id="create-user-button" class="btn btn-primary":disabled="form.errors.any()"><i v-if="form.submitting" id="create-user-spinner" class="fa fa-refresh fa-spin"></i> Create</button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
+                <div class="box-footer">
+                    <button type="submit" id="create-user-button" class="btn btn-primary":disabled="form.errors.any()"><i v-if="form.submitting" id="create-user-spinner" class="fa fa-refresh fa-spin"></i> Create</button>
+                </div>
+            </form>
+        </adminlte-vue-box>
     </div>
 </template>
 
@@ -63,11 +49,17 @@
 
   import Form from 'acacha-forms'
 
+  import {Box} from 'adminlte-vue'
+
   export default {
     data: function () {
       return {
-        form: new Form({ name: '', email: '', password: '' })
+        form: new Form({ name: '', email: '', password: '' }),
+        isCollapsed: this.collapsed
       }
+    },
+    components: {
+      'adminlte-vue-box' : Box
     },
     props: {
       apiUrl: {
@@ -84,10 +76,11 @@
         const API_URL = this.apiUrl
         this.form.post(API_URL)
           .then(response => {
-            console.log('User Invited correctly')
+            console.log('User created correctly')
+            this.$events.fire('reload-user-list')
           })
           .catch(error => {
-            console.log('Invited error: ' + error)
+            console.log('User created error: ' + error)
             console.log(this.form.errors.all())
           })
       },
@@ -97,6 +90,14 @@
     },
     mounted () {
       this.form.clearOnSubmit = true
+    },
+    events: {
+      'collapse-create-user' () {
+        this.isCollapsed = true
+      },
+      'expand-create-user' () {
+        this.isCollapsed = false
+      }
     }
   }
 

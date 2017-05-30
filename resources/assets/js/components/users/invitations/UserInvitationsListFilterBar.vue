@@ -33,5 +33,5 @@
     }
   }
 </script>
-<style src="./css/filterBar.css"></style>
+<style src="../css/filterBar.css"></style>
 

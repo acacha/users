@@ -47,19 +47,8 @@
 
   Vue.component('editable', Editable)
 
-  import store from './Store.js'
-
   export default {
-    data() {
-      return {
-        store : store
-      }
-    },
     computed: {
-      // a computed getter
-      editing: function () {
-        return this.store.editing[this.rowData.id]
-      },
       apiUrl: function () {
         return this.store.apiUrl
       }

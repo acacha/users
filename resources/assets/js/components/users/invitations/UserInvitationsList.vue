@@ -1,29 +1,31 @@
 <template>
-    <div id="user-list">
+    <div id="user-invitation-list">
+
         <!-- TODO Modal adminlte-->
-        <div class="modal modal-danger" id="confirm-user-deletion-modal">
+        <div class="modal modal-danger" id="confirm-user-invitation-deletion-modal">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span></button>
-                        <h4 class="modal-title">Confirm User deletion</h4>
+                        <h4 class="modal-title">Confirm User Invitation deletion</h4>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure you want to delete user?</p>
+                        <p>Are you sure you want to delete user invitation?</p>
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" id="user_id" value=""/>
+                        <input type="hidden" id="user-invitation_id" value=""/>
                         <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline" id="confirm-user-deletion-button" @click="deleteResource()"><i v-if="this.deleting" id="deleting-user-spinner" class="fa fa-refresh fa-spin"></i>  Delete</button>
+                        <button type="button" class="btn btn-outline" id="confirm-user-invitation-deletion-button" @click="deleteResource()"><i v-if="this.deleting" id="deleting-user-spinner" class="fa fa-refresh fa-spin"></i>  Delete</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <adminlte-vue-box color="success" :collapsed="isCollapsed" id="users-list-box" :loading="loading">
-            <span slot="title">Users Lists</span>
-            <users-list-filter-bar></users-list-filter-bar>
+        <adminlte-vue-box color="success" :collapsed="isCollapsed" id="user-invitations" :loading="loading">
+            <span slot="title">Invitations Lists</span>
+
+            <user-invitations-list-filter-bar></user-invitations-list-filter-bar>
             <div class="table-responsive">
                 <vuetable ref="vuetable"
                           :api-url="apiUrl"
@@ -31,20 +33,21 @@
                           pagination-path=""
                           :css="css.table"
                           :api-mode="true"
-                          row-class="um-user-row"
+                          row-class="um-user-invitation-row"
                           :append-params="moreParams"
                           :multi-sort="true"
-                          detail-row-component="user-detail-row"
+                          detail-row-component="user-invitations-detail-row"
                           @vuetable:pagination-data="onPaginationData"
                           @vuetable:cell-clicked="onCellClicked"
                           @vuetable:loading="showLoader"
                           @vuetable:loaded="hideLoader"
                 ></vuetable>
             </div>
+
             <div class="vuetable-pagination">
                 <vuetable-pagination-info ref="paginationInfo"
                                           info-class="pagination-info"
-                                          infoTemplate="Displaying {from} to {to} of {total} users"
+                                          infoTemplate="Displaying {from} to {to} of {total} invitations"
                 ></vuetable-pagination-info>
 
                 <vuetable-pagination ref="pagination"
@@ -54,28 +57,28 @@
                 ></vuetable-pagination>
             </div>
         </adminlte-vue-box>
-    </div>
 
+    </div>
 </template>
 
 <script>
 
-  import UsersListFilterBar from './UsersListFilterBar'
-  import UserDetailRow from './UserDetailRow'
-  import UserListCustomActions from './UsersListCustomActions'
+  import UserInvitationsListFilterBar from './UserInvitationsListFilterBar'
+  import UserInvitationDetailRow from './UserInvitationDetailRow'
+  import UserInvitationsListCustomActions from './UserInvitationsListCustomActions'
 
-  Vue.component('users-list-filter-bar', UsersListFilterBar)
-  Vue.component('user-detail-row', UserDetailRow)
-  Vue.component('users-list-custom-actions', UserListCustomActions)
+  Vue.component('user-invitations-list-filter-bar', UserInvitationsListFilterBar)
+  Vue.component('user-invitations-detail-row', UserInvitationDetailRow)
+  Vue.component('user-invitations-list-custom-actions', UserInvitationsListCustomActions)
 
-  import List from './mixins/List.js'
+  import List from '../mixins/List.js'
 
   export default {
     mixins: [
       List
     ],
     components: {
-      UsersListFilterBar
+      UserInvitationsListFilterBar
     },
     data() {
       return {
@@ -92,19 +95,17 @@
             dataClass: 'text-center',
           },
           {
-            name: 'extra',
-            visible: false,
-          },
-          {
             name: 'id',
             sortField: 'id',
           },
           {
-            name: 'name',
-            sortField: 'name',
+            name: 'email',
           },
           {
-            name: 'email',
+            name: 'state',
+          },
+          {
+            name: 'user_id',
           },
           {
             name: 'created_at',
@@ -113,41 +114,47 @@
             name: 'updated_at',
           },
           {
-            name: '__component:users-list-custom-actions',
+            name: '__component:user-invitations-list-custom-actions',
             title: 'Actions',
             titleClass: 'text-center',
             dataClass: 'text-center'
           }
-        ],
+        ]
       }
     },
     events: {
-      'filter-set-users-list' (filterText) {
+      'filter-set-user-invitations-list' (filterText) {
         this.moreParams = {
           filter: filterText
         }
         Vue.nextTick(() => this.refresh())
       },
-      'filter-reset-users-list' () {
+      'filter-reset-user-invitations-list' () {
         this.moreParams = {}
         Vue.nextTick(() => this.refresh())
       },
-      'reload-users-list' () {
+      'reload-user-invitations-list' () {
         Vue.nextTick(() => this.reload())
       },
-      'show-delete-user-dialog' (id) {
+      'show-delete-user-invitations-dialog' (id) {
         this.showDeleteDialog(id)
       },
-      'toogle-show-user' (id) {
+      'toogle-show-user-invitations' (id) {
         this.detailRowEditing(id,false)
       },
-      'toogle-edit-user' (id) {
+      'toogle-edit-user-invitations' (id) {
         this.detailRowEditing(id,true)
       },
-      'reload-user-list' () {
+      'reload-user-invitations' () {
         Vue.nextTick(() => this.refresh())
+      },
+      'collapse-user-invitations-list' () {
+        this.isCollapsed = true
+      },
+      'expand-user-invitations-list' () {
+        this.isCollapsed = false
       }
     }
   }
 </script>
-<style src="./css/pagination.css"></style>
+<style src="../css/pagination.css"></style>

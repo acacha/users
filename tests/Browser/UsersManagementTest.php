@@ -423,7 +423,7 @@ class UsersManagementTest extends DuskTestCase
 
     /**
      * Add user invitation.
-     *
+     * @group caca
      * @test
      */
     public function add_user_invitation()
@@ -433,24 +433,9 @@ class UsersManagementTest extends DuskTestCase
         $manager = $this->createUserManagerUser();
         $faker = Factory::create();
         $email = $faker->unique()->safeEmail;
-        $this->browse(function (Browser $browser) use ($manager,$email) {
 
-            $this->login($browser,$manager)
-                ->visit('/management/users?expand')
-                ->assertMissing('i#add-user-invitation-spinner');
-
-            $browser->type('#inputUserInvitationEmail',$email)
-                    ->press('Invite');
-
-            //Assert see adding/inviting spinner/icon
-            $browser->assertVisible('i#add-user-invitation-spinner');
-            //Wait for ajax request to finish
-            $browser->waitUntilMissing('i#add-user-invitation-spinner');
-            //Assert see result ok
-            $browser->assertVisible('div#add-user-invitation-result');
-            $browser->assertSeeIn('div#add-user-invitation-result', 'User invited!');
-            //Assert email field has been cleared
-            $this->assertEquals($browser->value('#inputUserInvitationEmail'),'');
+        $this->browse(function ($browser) use ($manager, $email) {
+            $this->fill_add_user_invitation($browser, $manager, $email);
         });
 
         $this->logout();
@@ -465,7 +450,37 @@ class UsersManagementTest extends DuskTestCase
     {
         dump(__FUNCTION__ );
         //        'email' => 'required|email|max:255|unique:users',
-//        TODO
+
+        dump(__FUNCTION__ );
+
+        $manager = $this->createUserManagerUser();
+        $faker = Factory::create();
+        $this->browse(function ($browser) use ($manager,$faker) {
+
+            $this->fill_create_user_form($browser, $manager, '',$faker->email,$faker->password);
+            $this->assertSeeValidationError($browser,'span#errorForInputCreateUserName',
+                'The name field is required.');
+
+            $this->fill_create_user_form($browser, $manager, str_random(256),$faker->email,$faker->password);
+            $this->assertSeeValidationError($browser,'span#errorForInputCreateUserName',
+                'The name may not be greater than 255 characters.');
+
+            $this->fill_create_user_form($browser, $manager, $faker->name,'',$faker->password);
+            $this->assertSeeValidationError($browser,'span#errorForInputCreateUserEmail',
+                'The email field is required.');
+
+            $this->fill_create_user_form($browser, $manager, $faker->name,'dsasaddsa@dsasda',$faker->password);
+            $this->assertSeeValidationError($browser,'span#errorForInputCreateUserEmail',
+                'The email must be a valid email address.');
+
+            $this->fill_create_user_form($browser, $manager, $faker->name, $faker->email,'');
+            $this->assertSeeValidationError($browser,'span#errorForInputCreateUserPassword',
+                'The password field is required.');
+
+            $this->fill_create_user_form($browser, $manager, $faker->name, $faker->email,str_random(5));
+            $this->assertSeeValidationError($browser,'span#errorForInputCreateUserPassword',
+                'The password must be at least 6 characters.');
+        });
     }
 
     /**
@@ -553,6 +568,31 @@ class UsersManagementTest extends DuskTestCase
      * Private/helper test functions for user invitations.
      * ----------------------------------------------------
      */
+
+    /**
+     * Fill add user invitation.
+     *
+     * @param $browser
+     * @param $manager
+     * @param null $email
+     */
+    private function fill_add_user_invitation($browser, $manager, $email = null) {
+        $this->login($browser,$manager);
+        $faker = Factory::create();
+        $browser->visit('/management/users?expand')
+            ->assertMissing('i#add-user-invitation-spinner');
+        ->type('#inputUserInvitationEmail',$email = ($email === null) ? $faker->email : $email)
+            ->press('Invite')
+            //Assert see adding/inviting spinner/icon
+            ->assertVisible('i#add-user-invitation-spinner')
+            //Wait for ajax request to finish
+            ->waitUntilMissing('i#add-user-invitation-spinner')
+            //Assert see result ok
+            ->assertVisible('div#add-user-invitation-result')
+            ->assertSeeIn('div#add-user-invitation-result', 'User invited!')
+            //Assert email field has been cleared
+            ->assertEquals($browser->value('#inputUserInvitationEmail'),'');
+    }
 
     /**
      * Create user with only see permissions.

@@ -20,7 +20,7 @@
 
       <hr>
 
-      <strong><i class="fa fa-envelope margin-r-5"></i> State</strong>
+      <strong><i class="fa fa-cog margin-r-5"></i> State</strong>
 
       <p class="text-muted">
         <!--TODO Dropdown with possible values!-->
@@ -29,7 +29,7 @@
 
       <hr>
 
-      <strong><i class="fa fa-envelope margin-r-5"></i> User id</strong>
+      <strong><i class="fa fa-user margin-r-5"></i> User id</strong>
 
       <!--TODO Dropdown for changing user invitation? Or show user name instead of id!-->
       <p class="text-muted">
@@ -53,24 +53,14 @@
 </template>
 
 <script>
-  import DetailRow from './mixins/DetailRow'
+  import DetailRow from '../mixins/DetailRow'
 
-  import Editable from './Editable'
+  import Editable from '../Editable'
 
   Vue.component('editable', Editable)
 
-  import store from './Store.js'
-
   export default {
-    data() {
-      return {
-        store : store
-      }
-    },
     computed: {
-      editing: function () {
-        return this.store.editing[this.rowData.id]
-      },
       apiUrl: function () {
         return this.store.apiUrl + '-invitations'
       }

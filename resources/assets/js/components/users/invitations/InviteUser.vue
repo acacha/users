@@ -11,7 +11,7 @@
                         <input type="email" class="form-control" id="inputUserInvitationEmail" placeholder="Enter email"
                                name="email" value="" v-model="form.email">
                         <transition name="fade">
-                            <span class="help-block" v-if="form.errors.has('email')" v-text="form.errors.get('email')"></span>
+                            <span class="help-block" id="inputUserInvitationEmailError" v-if="form.errors.has('email')" v-text="form.errors.get('email')"></span>
                         </transition>
                     </div>
                     <div class="col-xs-2">
@@ -23,7 +23,7 @@
     </div>
 </template>
 
-<style src="./css/fade.css"></style>
+<style src="../css/fade.css"></style>
 
 <script>
 
@@ -47,6 +47,7 @@
         this.form.post(API_URL)
           .then(response => {
             console.log('Invited ok')
+            this.$events.fire('reload-user-invitations')
           })
           .catch(error => {
             console.log('Invited error: ' + error)

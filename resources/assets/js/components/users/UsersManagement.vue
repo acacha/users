@@ -5,7 +5,7 @@
 
         <user-invitations :api-url="apiUrl" :collapsed="collapseUserInvitations"></user-invitations>
 
-        <users-list :api-url="apiUrl" :collapsed="collapseUsersList"></users-list>
+        <users-list :api-url="apiUrl" :collapsed="collapseUsersList" resource="user"></users-list>
 
     </div>
 </template>
@@ -16,7 +16,7 @@
 
   import UsersList from './UsersList'
   import CreateUser from './CreateUser'
-  import UserInvitations from './UserInvitations'
+  import UserInvitations from './invitations/UserInvitations'
 
   import store from './Store';
 
@@ -24,7 +24,7 @@
     data() {
       return {
         store : store,
-        collapseCreateUser : true,
+        collapseCreateUser: true,
         collapseUserInvitations: false,
         collapseUsersList : false
       }
@@ -43,12 +43,14 @@
     },
     methods: {
       collapse() {
-        this.collapseCreateUser=true
+        this.$events.fire('collapse-create-user')
+        this.$events.fire('collapse-user-invitations-list')
         this.collapseUserInvitations=true
         this.collapseUsersList=true
       },
       expand () {
-        this.collapseCreateUser=false
+        this.$events.fire('expand-create-user')
+        this.$events.fire('expand-user-invitations-list')
         this.collapseUserInvitations=false
         this.collapseUsersList=false
       }

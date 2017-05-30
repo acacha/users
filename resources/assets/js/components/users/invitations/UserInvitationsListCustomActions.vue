@@ -10,7 +10,7 @@
   import VueScrollTo from 'vue-scrollto'
   Vue.use(VueScrollTo)
 
-  import CustomActions from './mixins/CustomActions'
+  import CustomActions from '../mixins/CustomActions'
 
   export default {
     mixins: [
@@ -19,4 +19,4 @@
   }
 </script>
 
-<style src="./css/customActions.css"></style>
+<style src="../css/customActions.css"></style>
