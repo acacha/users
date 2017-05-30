@@ -50,6 +50,11 @@ If you discover any security related issues, please email sergiturbadenas@gmail.
 - [Sergi Tur Badenas][link-author]
 - [All Contributors][link-contributors]
 
+# TODO Javascript/Npm dependencies
+
+- adminlte-vue
+- password-generator https://www.npmjs.com/package/password-generator
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
