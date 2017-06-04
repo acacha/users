@@ -5,7 +5,9 @@ namespace Acacha\Users\Providers;
 use Acacha\Stateful\Providers\StatefulServiceProvider;
 use Acacha\Users\Models\UserInvitation;
 use Acacha\Users\Observers\UserInvitationObserver;
+use Acacha\Users\Observers\UserObserver;
 use AcachaUsers;
+use App\User;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
@@ -162,6 +164,7 @@ class UsersManagementServiceProvider extends ServiceProvider
     public function defineObservers()
     {
         UserInvitation::observe(UserInvitationObserver::class);
+        User::observe(UserObserver::class);
     }
 
 }

@@ -6,11 +6,11 @@ use Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class SendInvitationRequest.
+ * Class TrackModelRequest.
  *
  * @package Acacha\Users\Http\Requests
  */
-class SendInvitationRequest extends FormRequest
+class TrackModelRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,10 +19,7 @@ class SendInvitationRequest extends FormRequest
      */
     public function authorize()
     {
-
-        if (config('users.users_can_invite_other_users')) return true;
-        if (Auth::user()) return Auth::user()->can('send-user-invitations');
-        return false;
+        return Auth::user()->can('track-users');
     }
 
     /**
@@ -33,7 +30,7 @@ class SendInvitationRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|max:255|unique:users',
+            'model'     => 'required'
         ];
     }
 }

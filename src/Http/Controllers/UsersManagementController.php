@@ -12,18 +12,10 @@ use Response;
 /**
  * Class UsersManagementController
  *
- * @package App\Http\Controllers
+ * @package Acacha\Users\Http\Controllers
  */
 class UsersManagementController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
 
     /**
      * Show the application dashboard.
@@ -33,18 +25,7 @@ class UsersManagementController extends Controller
     public function users()
     {
         $this->authorize('see-manage-users-view');
-        return view('acacha_users::managment');
-    }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return Response
-     */
-    public function userInvitations()
-    {
-        $this->authorize('see-manage-user-invitations-view');
-        return view('acacha_users::managment-invitations');
+        return view('acacha_users::management');
     }
 
     /**
@@ -66,7 +47,11 @@ class UsersManagementController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
-        $user = User::create($request->only('name', 'email', 'password'));
+        $user = User::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
+        ]);
 
         event(new UserCreated($user));
 
@@ -85,7 +70,8 @@ class UsersManagementController extends Controller
         $this->authorize('delete-users');
         User::destroy($id);
 
-        // NOTE : this method trigger method "created" in UserInvitationObserver. Fire also and event to enable hooking.
+        //TODO
+        // NOTE : this method trigger method "created" in UserObserver. Fire also and event to enable hooking.
 //        event(new UserRemoved($user));
 
         return Response::json(['deleted' => true ]);
@@ -115,6 +101,18 @@ class UsersManagementController extends Controller
         $user = User::find($id);
         $user->update($request->intersect(['email','name','password']));
         return Response::json(['updated' => true ]);
+    }
+
+    /**
+     * Register user by email
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function registerByEmail(Request $request)
+    {
+        $data = [];
+        return view('acacha_users::register-by-email',$data);
     }
 
 }

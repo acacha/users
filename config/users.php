@@ -36,4 +36,16 @@ return [
 
     'register_acacha_stateful_service_provider' => true,
 
+    /*
+    |-------------------------------------------------------------------------------------------------
+    | Register Acacha  Stateful Service Provider?
+    |-------------------------------------------------------------------------------------------------
+    | This option will make public user invitations functionality so unauthenticated and unprivileged
+    | users can invite other users.
+    |
+    | This functionallity is protected by rate limiting.
+    */
+
+    'users_can_invite_other_users' => true,
+
 ];

@@ -6,11 +6,11 @@ use Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class SendInvitationRequest.
+ * Class CreateUserWithTokenRequest.
  *
  * @package Acacha\Users\Http\Requests
  */
-class SendInvitationRequest extends FormRequest
+class CreateUserWithTokenRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,10 +19,7 @@ class SendInvitationRequest extends FormRequest
      */
     public function authorize()
     {
-
-        if (config('users.users_can_invite_other_users')) return true;
-        if (Auth::user()) return Auth::user()->can('send-user-invitations');
-        return false;
+        return true;
     }
 
     /**
@@ -33,7 +30,11 @@ class SendInvitationRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|max:255|unique:users',
+            'name'     => 'required|max:255',
+            'username' => 'sometimes|required|max:255|unique:users',
+            'email'    => 'required|email|max:255|unique:users',
+            'password' => 'required|min:6',
+            'token'    => 'required'
         ];
     }
 }

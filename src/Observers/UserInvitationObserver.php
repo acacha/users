@@ -4,6 +4,7 @@ namespace Acacha\Users\Observers;
 
 use Acacha\Users\Models\UserInvitation;
 use Acacha\Users\Services\UserInvitations;
+use Venturecraft\Revisionable\Revision;
 
 /**
  * Class UserInvitationObserver.
@@ -43,5 +44,25 @@ class UserInvitationObserver
     public function deleting(UserInvitation $invitation)
     {
         //
+    }
+
+    /**
+     * Listen to the UserInvitation deleted event.
+     */
+    public function deleted(UserInvitation $invitation)
+    {
+        // Insert into 'revisions' (calling getTable probably not necessary, but to be safe).
+        \DB::table((new Revision())->getTable())->insert([
+            [
+                'revisionable_type' => $invitation->getMorphClass(),
+                'revisionable_id' => $invitation->id,
+                'key' => 'deleted_at',
+                'old_value' => null,
+                'new_value' => new \DateTime(),
+                'user_id' => (\Auth::check() ? \Auth::user()->id : null),
+                'created_at' => new \DateTime(),
+                'updated_at' => new \DateTime(),
+            ]
+        ]);
     }
 }

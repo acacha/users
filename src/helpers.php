@@ -87,6 +87,20 @@ if (! function_exists('initialize_users_management_permissions')) {
         give_permission_to_role($manageUsers,'edit-user-invitations');
         give_permission_to_role($manageUsers,'delete-user-invitations');
 
+        //USERS DASHBOARD
+        permission_first_or_create('see-users-dashboard');
+        give_permission_to_role($manageUsers,'see-users-dashboard');
+
+        //USERS TRACKING
+        permission_first_or_create('track-users');
+        permission_first_or_create('see-users-tracking');
+        give_permission_to_role($manageUsers,'track-users');
+        give_permission_to_role($manageUsers,'see-users-tracking');
+
+        //USERS PROFILE
+        permission_first_or_create('see-other-users-profile');
+        give_permission_to_role($manageUsers,'see-other-users-profile');
+
         app(PermissionRegistrar::class)->registerPermissions();
 
     }
