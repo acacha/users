@@ -60,17 +60,30 @@ class RevisionableController extends Controller
     {
         switch ($revision->key) {
             case 'created_at':
-                return $this->getResponsibleUsername($revision) . ' (' . $revision->user_id . ')'
-                    . ' created user ' . $this->getAffectedResourceName($revision) . ' (' . $revision->revisionable_id . ')';
+                return $this->getResponsibleInfo($revision) . ' created user '
+                    . $this->getAffectedResourceName($revision) . ' (' . $revision->revisionable_id . ')';
             case 'deleted_at':
-                return $this->getResponsibleUsername($revision) . ' (' . $revision->user_id . ')'
-                    . ' deleted user ' . $this->getAffectedResourceName($revision) . ' (' . $revision->revisionable_id . ')';
+                return $this->getResponsibleInfo($revision) . ' deleted user '
+                    . $this->getAffectedResourceName($revision) . ' (' . $revision->revisionable_id . ')';
             default:
-                return $this->getResponsibleUsername($revision) . ' (' . $revision->user_id . ')'
-                    . ' changed user ' . $this->getAffectedResourceName($revision) . ' (' . $revision->revisionable_id . ')'
+                return $this->getResponsibleInfo($revision) . ' changed user '
+                    . $this->getAffectedResourceName($revision) . ' (' . $revision->revisionable_id . ')'
                     . ' field ' .  $revision->fieldName() . ' from ' .$revision->oldValue() . ' to ' .
                     $revision->newValue();
         }
+    }
+
+    /**
+     * Get responsible info.
+     *
+     * @param $revision
+     * @return string
+     */
+    private function getResponsibleInfo($revision)
+    {
+        $username = $this->getResponsibleUsername($revision);
+        return '<span title="'. $username . ' (' . $revision->user_id  . ')' . '" class="responsibleUser" 
+            model="' . $revision->revisionable_type . '">' . $username . '</span>';
     }
 
     /**

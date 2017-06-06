@@ -52,6 +52,10 @@ Route::group(['middleware' => 'api','prefix' => 'api/v1', 'middleware' => 'throt
 
         //Users profile
         Route::get('/user/profile/{user?}', 'UserProfileController@show')->middleware('bindings');
+
+        //User reset password email
+        Route::post('/management/users/send/reset-password-email',
+            '\App\Http\Controllers\Auth\NoGuestForgotPasswordController@sendResetLinkEmail');
     });
 
     Route::post('/management/user-invitations-accept', 'UserInvitationsController@postAccept');
