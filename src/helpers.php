@@ -101,6 +101,10 @@ if (! function_exists('initialize_users_management_permissions')) {
         permission_first_or_create('see-other-users-profile');
         give_permission_to_role($manageUsers,'see-other-users-profile');
 
+        //USERS REST PASSWORD EMAIL
+        permission_first_or_create('reset-user-password');
+        give_permission_to_role($manageUsers,'reset-user-password');
+
         app(PermissionRegistrar::class)->registerPermissions();
 
     }

@@ -1,26 +1,7 @@
 <template>
     <div id="user-invitation-list">
 
-        <!-- TODO Modal adminlte-->
-        <div class="modal modal-danger" id="confirm-user-invitation-deletion-modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span></button>
-                        <h4 class="modal-title">Confirm User Invitation deletion</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete user invitation?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="hidden" id="user-invitation_id" value=""/>
-                        <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline" id="confirm-user-invitation-deletion-button" @click="deleteResource()"><i v-if="this.deleting" id="deleting-user-spinner" class="fa fa-refresh fa-spin"></i>  Delete</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <confirm-dialog :acting="performingAction"></confirm-dialog>
 
         <adminlte-vue-box color="success" :collapsed="isCollapsed" id="user-invitations" :loading="loading">
             <span slot="title">Invitations Lists</span>

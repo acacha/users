@@ -1,16 +1,19 @@
 # users
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
+[![Total Downloads](https://poser.pugx.org/acacha/users/downloads.png)](https://packagist.org/packages/acacha/users)
+[![Monthly Downloads](https://poser.pugx.org/acacha/users/d/monthly)](https://packagist.org/packages/acacha/users)
+[![Daily Downloads](https://poser.pugx.org/acacha/users/d/daily)](https://packagist.org/packages/acacha/users)
 [![Software License][ico-license]](LICENSE.md)
 [![Build Status][ico-travis]][link-travis]
 [![Coverage Status][ico-scrutinizer]][link-scrutinizer]
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
+[![StyleCI](https://styleci.io/repos/35628567/shield)](https://styleci.io/repos/35628567)
+[![Code Coverage](https://scrutinizer-ci.com/g/acacha/users/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/acacha/users/?branch=master)
+[![Dependency Status](https://www.versioneye.com/user/projects/593803c298442b00398eb8eb/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/593803c298442b00398eb8eb)[![Dependency Status Node.js](https://www.versioneye.com/user/projects/58483fc88c5dae0039a10ca5/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58483fc88c5dae0039a10ca5)
 
-**Note:** Replace ```Sergi Tur Badenas``` ```acacha``` ```https://github.com/acacha``` ```sergiturbadenas@gmail.com``` ```acacha``` ```users``` ```User managment with Laravel and adminlte-laravel``` with their correct values in [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE.md](LICENSE.md) and [composer.json](composer.json) files, then delete this line. You can run `$ php prefill.php` in the command line to make all replacements at once. Delete the file prefill.php as well.
-
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what
-PSRs you support to avoid any confusion with users and contributors.
+Acacha users is a Laravel package that add Users managment support yo your Laravel app. 
 
 ## Install
 
