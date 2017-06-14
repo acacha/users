@@ -14,6 +14,9 @@ Route::group(['middleware' => 'web'], function () {
             return view('acacha_users::tracking');
         })->middleware('can:see-users-dashboard');
         Route::get('/user/profile/{user?}', 'UserProfileController@index');
+
+        //Users migration
+        Route::get('management/users-migration', 'UsersMigrationController@index')->name('users-migration');
     });
     // "Public" accessible but protected by token
     Route::get('/management/users/user-invitation-accept', 'UserInvitationsController@accept');
@@ -32,6 +35,7 @@ Route::group(['middleware' => 'api','prefix' => 'api/v1', 'middleware' => 'throt
         Route::post('/management/users', 'UsersManagementController@store');
         Route::get('/management/users/{User}', 'UsersManagementController@show');
         Route::delete('/management/users/{User}', 'UsersManagementController@destroy');
+        Route::post('/management/users-massive', 'UsersManagementController@massiveDestroy');
         Route::put('/management/users/{User}', 'UsersManagementController@update');
 
         //USER INVITATIONS
@@ -55,7 +59,17 @@ Route::group(['middleware' => 'api','prefix' => 'api/v1', 'middleware' => 'throt
 
         //User reset password email
         Route::post('/management/users/send/reset-password-email',
-            '\App\Http\Controllers\Auth\NoGuestForgotPasswordController@sendResetLinkEmail');
+            'UsersManagementController@sendResetLinkEmail');
+//        Route::post('/management/users/send/reset-password-email',
+//            '\App\Http\Controllers\Auth\NoGuestForgotPasswordController@sendResetLinkEmail');
+        Route::post('/management/users/send/reset-password-email/massive',
+            'UsersManagementController@massiveSendResetLinkEmail');
+
+        //Users migration
+        Route::get('/management/users-migration/totalNumberOfUsers', 'UsersMigrationController@totalNumberOfUsers');
+
+        Route::post('/management/users-migration/migrate', 'UsersMigrationController@migrate');
+
     });
 
     Route::post('/management/user-invitations-accept', 'UserInvitationsController@postAccept');

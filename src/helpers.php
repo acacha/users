@@ -62,6 +62,7 @@ if (! function_exists('initialize_users_management_permissions')) {
         permission_first_or_create('view-users');
         permission_first_or_create('edit-users');
         permission_first_or_create('delete-users');
+        permission_first_or_create('massive-delete-users');
 
         give_permission_to_role($manageUsers,'see-manage-users-view');
         give_permission_to_role($manageUsers,'list-users');
@@ -69,6 +70,12 @@ if (! function_exists('initialize_users_management_permissions')) {
         give_permission_to_role($manageUsers,'view-users');
         give_permission_to_role($manageUsers,'edit-users');
         give_permission_to_role($manageUsers,'delete-users');
+        give_permission_to_role($manageUsers,'massive-delete-users');
+
+        //Users migration
+
+        permission_first_or_create('migrate-users');
+        give_permission_to_role($manageUsers,'migrate-users');
 
         //USER INVITATIONS
         permission_first_or_create('see-manage-user-invitations-view');

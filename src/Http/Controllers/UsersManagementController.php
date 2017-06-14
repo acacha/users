@@ -4,9 +4,12 @@ namespace Acacha\Users\Http\Controllers;
 
 use Acacha\Users\Events\UserCreated;
 use Acacha\Users\Http\Requests\CreateUserRequest;
+use Acacha\Users\Http\Requests\MassiveDestroyRequest;
 use Acacha\Users\Http\Requests\UpdateUserRequest;
 use App\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Password;
 use Response;
 
 /**
@@ -58,23 +61,45 @@ class UsersManagementController extends Controller
         return Response::json(['created' => true ]);
     }
 
-
     /**
-     * Remove the specified resource from storage.
+     * Massive destroy.
      *
-     * @param  int  $id
+     * @param MassiveDestroyRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function massiveDestroy(MassiveDestroyRequest $request)
     {
-        $this->authorize('delete-users');
-        User::destroy($id);
+        $this->authorize('massive-delete-users');
+        return $this->executeDestroy($request->input('ids'));
+    }
+
+    /**
+     * Execute destroy.
+     *
+     * @param $ids
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function executeDestroy($ids){
+        User::destroy($ids);
 
         //TODO
         // NOTE : this method trigger method "created" in UserObserver. Fire also and event to enable hooking.
 //        event(new UserRemoved($user));
 
         return Response::json(['deleted' => true ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int|array  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy($id)
+    {
+        $this->authorize('delete-users');
+
+        return $this->executeDestroy($id);
     }
 
     /**
@@ -113,6 +138,53 @@ class UsersManagementController extends Controller
     {
         $data = [];
         return view('acacha_users::register-by-email',$data);
+    }
+
+    /**
+     * Send a reset link to the given user.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function sendResetLinkEmail(Request $request)
+    {
+        $this->validate($request, ['email' => 'required|email']);
+
+        $response = Password::broker()->sendResetLink(
+            $request->only('email')
+        );
+
+        if (Password::RESET_LINK_SENT) {
+            return new JsonResponse(['status' => trans($response) ], 200);
+        }
+
+        return new JsonResponse(['email' => trans($response) ], 422);
+
+    }
+
+    /**
+     * Send a reset link to the given users.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function massiveSendResetLinkEmail(Request $request)
+    {
+        $this->validate($request, ['ids' => 'required']);
+
+        $errors = [];
+        foreach ($request->input('ids') as $id) {
+            $user = User::find($id);
+            $response = Password::broker()->sendResetLink([ 'email' => $user->email ]);
+            if (! Password::RESET_LINK_SENT) {
+                dd('ERROR!');
+                $errors[] = $response;
+            }
+        }
+
+        if ( count($errors) > 0 ) return new JsonResponse(['status' => 'Error', 'errors' => $errors ], 422);
+
+        return new JsonResponse(['status' => 'Done' ], 200);
     }
 
 }
