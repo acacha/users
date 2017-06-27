@@ -8,18 +8,31 @@ use Acacha\Users\Observers\UserInvitationObserver;
 use Acacha\Users\Observers\UserObserver;
 use AcachaUsers;
 use App\User;
-use Illuminate\Support\ServiceProvider;
+use Broadcast;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
+
 
 /**
  * Class UsersManagementServiceProvider.
  *
  * @package Acacha\Users\Providers
  */
-class UsersManagementServiceProvider extends ServiceProvider
+class UsersManagementServiceProvider extends EventServiceProvider
 {
+
+    /**
+     * The event listener mappings for the application.
+     *
+     * @var array
+     */
+    protected $listen = [
+        \Acacha\Users\Events\UserHasBeenMigrated::class => [
+            \Acacha\Users\Listeners\PersistUserMigrationInDatabase::class,
+        ],
+    ];
 
     /**
      * Register the application services.
@@ -81,6 +94,9 @@ class UsersManagementServiceProvider extends ServiceProvider
      * Bootstrap the application services.
      */
     public function boot() {
+        //Parent will be responsible of registering events using $listen property
+        parent::boot();
+
         $this->defineRoutes();
 
         //Publish
@@ -93,8 +109,21 @@ class UsersManagementServiceProvider extends ServiceProvider
         $this->publishSeeds();
 
         $this->defineObservers();
-        
+        $this->configureBroadcastChannels();
+
     }
+
+    /**
+     * Configure broadcast channels.
+     *
+     */
+    protected function configureBroadcastChannels()
+    {
+        Broadcast::channel('acacha-users', function ($user) {
+            return $user->can('subscribe-to-users-broadcast-channel');
+        });
+    }
+
 
     /**
      * Define the AdminLTETemplate routes.

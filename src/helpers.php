@@ -45,7 +45,7 @@ if (! function_exists('give_permission_to_role')) {
         try {
             $role->givePermissionTo($permission);
         } catch (Illuminate\Database\QueryException $e) {
-            dump('Permissions ' . $permission . ' already assigned to role ' . $role->name);
+            info('Permissions ' . $permission . ' already assigned to role ' . $role->name);
         }
     }
 }
@@ -63,6 +63,7 @@ if (! function_exists('initialize_users_management_permissions')) {
         permission_first_or_create('edit-users');
         permission_first_or_create('delete-users');
         permission_first_or_create('massive-delete-users');
+        permission_first_or_create('subscribe-to-users-broadcast-channel');
 
         give_permission_to_role($manageUsers,'see-manage-users-view');
         give_permission_to_role($manageUsers,'list-users');
@@ -71,6 +72,7 @@ if (! function_exists('initialize_users_management_permissions')) {
         give_permission_to_role($manageUsers,'edit-users');
         give_permission_to_role($manageUsers,'delete-users');
         give_permission_to_role($manageUsers,'massive-delete-users');
+        give_permission_to_role($manageUsers,'subscribe-to-users-broadcast-channel');
 
         //Users migration
 

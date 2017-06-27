@@ -48,4 +48,14 @@ return [
 
     'users_can_invite_other_users' => true,
 
+    /*
+    |-------------------------------------------------------------------------------------------------
+    | Users Migration source database connection
+    |-------------------------------------------------------------------------------------------------
+    | The connection name of source database connection name.
+    |
+    */
+
+    'source_database_connection_name' => 'ebre_escool',
+
 ];

@@ -21,7 +21,7 @@ trait ExposePermissions
     {
         $permissions = [];
         foreach (Permission::all() as $permission) {
-            if (Auth::user()->can($permission->name)) {
+            if (Auth::check() && Auth::user()->can($permission->name)) {
                 $permissions[$permission->name] = true;
             } else {
                 $permissions[$permission->name] = false;
@@ -29,7 +29,6 @@ trait ExposePermissions
         }
         return $permissions;
     }
-
 
     /**
      * Get all user permissions.

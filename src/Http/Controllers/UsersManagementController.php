@@ -3,6 +3,7 @@
 namespace Acacha\Users\Http\Controllers;
 
 use Acacha\Users\Events\UserCreated;
+use Acacha\Users\Events\UserRemoved;
 use Acacha\Users\Http\Requests\CreateUserRequest;
 use Acacha\Users\Http\Requests\MassiveDestroyRequest;
 use Acacha\Users\Http\Requests\UpdateUserRequest;
@@ -80,11 +81,12 @@ class UsersManagementController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     private function executeDestroy($ids){
+
+        $models = User::find($ids);
+
         User::destroy($ids);
 
-        //TODO
-        // NOTE : this method trigger method "created" in UserObserver. Fire also and event to enable hooking.
-//        event(new UserRemoved($user));
+        event(new UserRemoved($models->toJson()));
 
         return Response::json(['deleted' => true ]);
     }

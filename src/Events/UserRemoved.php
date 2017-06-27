@@ -10,24 +10,24 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 
 /**
- * Class UserCreated.
+ * Class UserRemoved.
  *
  * @package Acacha\Users\Events
  */
-class UserCreated implements ShouldBroadcast
+class UserRemoved implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user;
+    public $users;
 
     /**
-     * UserCreated constructor.
+     * UserRemoved constructor.
      *
-     * @param $user
+     * @param $users
      */
-    public function __construct($user)
+    public function __construct($users)
     {
-        $this->user = $user;
+        $this->users = $users;
     }
 
 
