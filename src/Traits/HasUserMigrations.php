@@ -19,6 +19,7 @@ trait HasUserMigrations
      */
     public function scopeMigrated($query)
     {
+        //TODO: Custom query to improve performance or Cache!
         return $query->has('migration');
     }
 

@@ -17,6 +17,16 @@ Route::group(['middleware' => 'web'], function () {
 
         //Users migration
         Route::get('management/users-migration', 'UsersMigrationController@index')->name('users-migration');
+
+        //Google apps
+        Route::get('/management/users/google', 'GoogleAppsUsersController@index');
+        Route::get('/management/users/google2', 'GoogleAppsUsersController@check');
+        Route::get('/management/users/google1', 'GoogleAppsUsersController@esborrar');
+        Route::get('/management/users/google3', 'GoogleAppsUsersController@google3');
+        Route::get('/management/users/google4', 'GoogleAppsUsersController@google4');
+        Route::get('/management/users/google8', 'GoogleAppsUsersController@google8');
+        Route::get('/management/users/google10', 'GoogleAppsUsersController@google10');
+
     });
     // "Public" accessible but protected by token
     Route::get('/management/users/user-invitation-accept', 'UserInvitationsController@accept');
@@ -84,6 +94,11 @@ Route::group(['middleware' => 'api','prefix' => 'api/v1', 'middleware' => 'throt
 
         Route::get('/management/users-migration/history', 'UsersMigrationController@history');
         Route::get('/management/users-migration/batch_history', 'UsersMigrationController@batchHistory');
+
+        Route::get('/management/users-google/check', 'GoogleAppsUsersController@check');
+        Route::get('/management/users-google/local-sync', 'GoogleAppsUsersController@localSync');
+
+        Route::get('/management/users-google', 'GoogleAppsUsersController@all');
 
     });
 

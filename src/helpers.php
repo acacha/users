@@ -114,6 +114,15 @@ if (! function_exists('initialize_users_management_permissions')) {
         permission_first_or_create('reset-user-password');
         give_permission_to_role($manageUsers,'reset-user-password');
 
+        //Google apps users
+        permission_first_or_create('see-google-apps-users');
+        permission_first_or_create('check-google-apps-connection');
+        permission_first_or_create('list-google-apps-users');
+        permission_first_or_create('sync-google-apps-users');
+        give_permission_to_role($manageUsers,'see-google-apps-users');
+        give_permission_to_role($manageUsers,'check-google-apps-connection');
+        give_permission_to_role($manageUsers,'list-google-apps-users');
+        give_permission_to_role($manageUsers,'sync-google-apps-users');
         app(PermissionRegistrar::class)->registerPermissions();
 
     }

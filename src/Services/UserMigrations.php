@@ -3,6 +3,7 @@
 namespace Acacha\Users\Services;
 
 use Acacha\Users\Events\ProgressBarStatusHasBeenUpdated;
+use Acacha\Users\Events\UserCreated;
 use Acacha\Users\Models\ProgressBatch;
 use Illuminate\Support\Collection;
 use Psr\Log\InvalidArgumentException;
@@ -49,13 +50,18 @@ class UserMigrations
         $max_execution_time = ini_get('max_execution_time');
         set_time_limit ( 0);
 
-        if (count($usersToMigrate) == 0 ) return;
+        if (count($usersToMigrate) == 0 ){
+            info('Users migration : Nothing to migrate!');
+            event(new ProgressBarStatusHasBeenUpdated('users-migration-progress-bar', 100,'Migration finished. Nothing to migrate!' ));
+            return;
+        }
 
         info('Users migration : A new batch user migration ( id: ' . $batch->id .') has been initialized!');
         $progressIncrement = $this->progressIncrement($usersToMigrate);
 
         $progress= 0; $migratedUsers=0; $errorUsers=0;
 
+        dump($usersToMigrate);
         foreach ($usersToMigrate as $user) {
             if ($batch->stopped()) {
                 info('Users migration : A batch user migration ( id: ' . $batch->id .') has been stopped!');
@@ -102,6 +108,7 @@ class UserMigrations
                     'password' => bcrypt('secret')
                 ]);
                 event(new UserHasBeenMigrated($user->id, $user->toJson(), $newUser, $batchId));
+                event(new UserCreated($newUser));
                 return $newUser;
             } catch( QueryException $e) {
                 event(new UserHasBeenMigrated($user->id, $user->toJson(), null, $batchId));

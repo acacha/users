@@ -174,7 +174,8 @@ class UsersMigrationController extends Controller
     {
         if ($users = $request->has('users')) return $this->usersToMigrate($users, $request);
         if ($filter = $request->has('filter')) return $this->usersToMigrateByFilter($filter, $request);
-        return $this->allUsers($request);
+        if ($filter = $request->has('all')) return $this->allUsers($request);
+        return $this->pendingUsersToMigrate($request);
     }
 
     /**
@@ -213,7 +214,7 @@ class UsersMigrationController extends Controller
      */
     protected function usersToMigrateByFilter($filter, $request)
     {
-
+        //TODO
     }
 
     /**
@@ -226,4 +227,19 @@ class UsersMigrationController extends Controller
     {
         return \Scool\EbreEscoolModel\User::with('person')->get();
     }
+
+    /**
+     * Get all pending users to migrate.
+     *
+     * @param $request
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    protected function pendingUsersToMigrate($request)
+    {
+        $ids = UserMigration::all()->pluck('source_user_id');
+        return ($ids->count() > 0)
+            ? \Scool\EbreEscoolModel\User::whereNotIn('id',$ids)->with('person')->get()
+            : [] ;
+    }
+
 }

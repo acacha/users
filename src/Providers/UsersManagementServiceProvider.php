@@ -3,6 +3,9 @@
 namespace Acacha\Users\Providers;
 
 use Acacha\Stateful\Providers\StatefulServiceProvider;
+use Illuminate\Foundation\AliasLoader;
+use PulkitJalan\Google\Facades\Google;
+use PulkitJalan\Google\GoogleServiceProvider;
 use Acacha\Users\Models\UserInvitation;
 use Acacha\Users\Observers\UserInvitationObserver;
 use Acacha\Users\Observers\UserObserver;
@@ -13,7 +16,6 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
-
 
 /**
  * Class UsersManagementServiceProvider.
@@ -56,7 +58,10 @@ class UsersManagementServiceProvider extends EventServiceProvider
 
         if (config('acacha_users.register_acacha_stateful_service_provider', true)) {
             $this->registerAcachaStatefulServiceProvider();
-            Passport::routes();
+        }
+
+        if (config('acacha_users.register_google_service_provider', true)) {
+            $this->registerGoogleServiceProvider();
         }
     }
 
@@ -88,6 +93,24 @@ class UsersManagementServiceProvider extends EventServiceProvider
     protected function registerAcachaStatefulServiceProvider()
     {
         $this->app->register(StatefulServiceProvider::class);
+    }
+
+    /**
+     * Register Google Service Provider.
+     */
+    protected function registerGoogleServiceProvider()
+    {
+        $this->app->register(GoogleServiceProvider::class);
+
+        $this->app->booting(function() {
+            $loader = AliasLoader::getInstance();
+            $loader->alias('Google', Google::class);
+        });
+
+        app()->extend(\PulkitJalan\Google\Client::class, function ($command, $app) {
+            $config = $app['config']['google'];
+            return new \PulkitJalan\Google\Client($config, config('users.google_apps_admin_user_email'));
+        });
     }
 
     /**
