@@ -84,38 +84,46 @@ class GoogleAppsService
     public function localSync()
     {
         $users = Cache::rememberForever('google_app_users', function () {
-//            return $this->getUsers();
             return $this->allUsers();
         });
 
-        foreach ($users as $user) {
-//            dd($user);
-            $user = GoogleUser::firstOrCreate([
-                'customerId' => $user->customerId,
-                'kind' => $user->kind,
-                'google_id'=> $user->id,
-                'etag'=> $user->etag,
-                'primaryEmail'=> $user->primaryEmail,
-                'givenName'=> $user->name->givenName,
-                'familyName'=> $user->name->familyName,
-                'fullName'=> $user->name->fullName,
-                'orgUnitPath'=> $user->orgUnitPath,
-                'organizations'=> json_decode($user->organizations),
-                'isAdmin'=> $user->isAdmin,
-                'isDelegatedAdmin'=> $user->isDelegatedAdmin,
-                'lastLoginTime'=> $user->lastLoginTime,
-                'creationTime'=> $user->creationTime,
-                'deletionTime'=> $user->deletionTime,
-                'agreedToTerms'=> $user->agreedToTerms,
-                'password'=> $user->password,
-                'hashFunction'=> $user->hashFunction,
-                'suspended'=> $user->suspended,
-                'suspensionReason'=> $user->suspensionReason,
-                'changePasswordAtNextLogin'=> $user->changePasswordAtNextLogin,
-                'emails'=> json_encode($user->emails),
-            ]);
-//            dd($user);
+        try {
+            foreach ($users as $user) {
+                $user = GoogleUser::firstOrCreate([
+                    'customerId' => $user->customerId,
+                    'kind' => $user->kind,
+                    'google_id'=> $user->id,
+                    'etag'=> $user->etag,
+                    'primaryEmail'=> $user->primaryEmail,
+                    'givenName'=> $user->name->givenName,
+                    'familyName'=> $user->name->familyName,
+                    'fullName'=> $user->name->fullName,
+                    'orgUnitPath'=> $user->orgUnitPath,
+                    'organizations'=> json_decode($user->organizations),
+                    'isAdmin'=> $user->isAdmin,
+                    'isDelegatedAdmin'=> $user->isDelegatedAdmin,
+                    'lastLoginTime'=> $user->lastLoginTime,
+                    'creationTime'=> $user->creationTime,
+                    'deletionTime'=> $user->deletionTime,
+                    'agreedToTerms'=> $user->agreedToTerms,
+                    'password'=> $user->password,
+                    'hashFunction'=> $user->hashFunction,
+                    'suspended'=> $user->suspended,
+                    'suspensionReason'=> $user->suspensionReason,
+                    'changePasswordAtNextLogin'=> $user->changePasswordAtNextLogin,
+                    'emails'=> json_encode($user->emails),
+                ]);
+            }
+        } catch (\Exception $e) {
+            return [
+                'completed' => 'false',
+                'message' => $e->getMessage()
+            ];
         }
+
+        return [
+            'completed' => 'true'
+        ];
     }
 
     /**

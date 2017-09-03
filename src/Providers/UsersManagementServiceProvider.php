@@ -178,7 +178,7 @@ class UsersManagementServiceProvider extends EventServiceProvider
     {
         $this->loadViewsFrom(ACACHA_USERS_PATH.'/resources/views/', 'acacha_users');
 
-        $this->publishes(AcachaUsers::views(), 'acacha_users_views');
+        $this->publishes(AcachaUsers::views(), 'acacha_users');
     }
 
     /**
