@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['middleware' => 'api','prefix' => 'api/v1', 'middleware' => 'throttle'], function () {
+Route::group([ 'prefix' => 'api/v1', 'middleware' => ['api','bindings,throttle']], function () {
     Route::group(['middleware' => 'auth:api'], function() {
         //USERS
         Route::get('/management/users', 'UsersManagementController@index');
@@ -27,7 +27,7 @@ Route::group(['middleware' => 'api','prefix' => 'api/v1', 'middleware' => 'throt
         Route::get('/revisionable/model/tracking', 'RevisionableController@trackModel');
 
         //Users profile
-        Route::get('/user/profile/{user?}', 'UserProfileController@show')->middleware('bindings');
+        Route::get('/user/profile/{user?}', 'UserProfileController@show');
 
         //User reset password email
         Route::post('/management/users/send/reset-password-email',

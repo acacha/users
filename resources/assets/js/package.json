@@ -1,0 +1,17 @@
+{
+  "name": "acacha-users",
+  "version": "1.0.0",
+  "description": "Acacha users",
+  "main": "users-bootstrap.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Sergi Tur Badenas <sergiturbadenas@gmail.com> (http://acacha.org)",
+  "license": "ISC",
+  "dependencies": {
+    "acacha-forms": "^1.0.8",
+    "axios": "^0.17.1",
+    "vue": "^2.5.9"
+  }
+}
