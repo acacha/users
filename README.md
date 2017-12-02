@@ -36,6 +36,26 @@ Then install this Laravel Package using:
 composer require acacha/users
 ```
 
+Now install Javascript Vue components using:
+
+```
+npm install --save acacha-users
+```
+
+Modify your app.js Bundle to use acacha-users Vue components adding:
+
+```
+//Acacha Users management components
+require('users-bootstrap');
+```
+
+Just after Vue installation. Now compile with:
+
+```
+npm install
+npm run dev
+```
+
 ### Installation on development
 
 Via Composer please first create a new fresh Laravel Project:
@@ -80,7 +100,50 @@ Then install this Laravel Package using:
 ``` bash
 composer require acacha/stateful-eloquent:dev-master
 composer require acacha/users:dev-master
+composer require scool/ebre_escool_model:dev-master
 composer require acacha/users-ebre-escool-migration:dev-master
+```
+
+Now is time to configure npm dependencies. Modify file webpack.mix.js adding:
+
+```
+  .js .....
+  .sourceMaps()
+  .webpackConfig({
+    resolve: {
+      modules: [
+        path.resolve(__dirname, './users/resources/assets/js'),
+        path.resolve(__dirname, './users-ebre-escool-migration/resources/assets/js'),
+        path.resolve(__dirname, 'node_modules')
+      ]
+    }
+  })
+```
+
+Compile Javascript bundle with Laravel Mix/webpack:
+
+```
+npm install
+npm run dev
+```
+
+## Requirements
+
+- Laravel
+- Acacha AdminLTE Laravel template
+- Javascript npm packages
+  - Vue
+  - Axios
+  - adminlte-vue
+  - vuetable-2
+  - password-generator
+  - vue-events (TODO migrate to Vuex Store!)
+  - vue-scrollto
+  
+Vuetable-2 problem with transform-runtime (see also http://acacha.org/mediawiki/Vuetable2):
+
+```
+npm install --save-dev babel-plugin-transform-runtime babel-preset-stage-2
 ```
 
 ## Usage
