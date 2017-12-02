@@ -155,10 +155,33 @@ class UsersManagementServiceProvider extends EventServiceProvider
     {
         if (!$this->app->routesAreCached()) {
             $router = app('router');
-            $router->group(['namespace' => 'Acacha\Users\Http\Controllers'], function () {
-                require __DIR__.'/../Http/routes.php';
-            });
+            $this->defineWebRoutes($router);
+            $this->defineWebRoutes($router);
         }
+    }
+
+    /**
+     * Define web routes.
+     *
+     * @param $router
+     */
+    protected function defineWebRoutes($router)
+    {
+        $router->group(['namespace' => 'Acacha\Users\Http\Controllers'], function () {
+            require ACACHA_USERS_PATH.'/routes/web.php';
+        });
+    }
+
+    /**
+     * Define api routes.
+     *
+     * @param $router
+     */
+    protected function defineApiRoutes($router)
+    {
+        $router->group(['namespace' => 'Acacha\Users\Http\Controllers'], function () {
+            require ACACHA_USERS_PATH.'/routes/api.php';
+        });
     }
 
     /**
