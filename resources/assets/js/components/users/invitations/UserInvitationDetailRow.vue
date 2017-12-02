@@ -68,8 +68,8 @@
     mixins: [
       DetailRow
     ],
-    components: [
+    components: {
       Editable
-    ]
+    }
   }
 </script>

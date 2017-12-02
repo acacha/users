@@ -74,11 +74,6 @@ if (! function_exists('initialize_users_management_permissions')) {
         give_permission_to_role($manageUsers,'massive-delete-users');
         give_permission_to_role($manageUsers,'subscribe-to-users-broadcast-channel');
 
-        //Users migration
-
-        permission_first_or_create('migrate-users');
-        give_permission_to_role($manageUsers,'migrate-users');
-
         //USER INVITATIONS
         permission_first_or_create('see-manage-user-invitations-view');
         permission_first_or_create('list-user-invitations');

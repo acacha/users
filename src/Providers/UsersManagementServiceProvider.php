@@ -4,6 +4,7 @@ namespace Acacha\Users\Providers;
 
 use Acacha\Stateful\Providers\StatefulServiceProvider;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\ServiceProvider;
 use PulkitJalan\Google\Facades\Google;
 use PulkitJalan\Google\GoogleServiceProvider;
 use Acacha\Users\Models\UserInvitation;
@@ -12,7 +13,6 @@ use Acacha\Users\Observers\UserObserver;
 use AcachaUsers;
 use App\User;
 use Broadcast;
-use Illuminate\Foundation\Support\Providers\EventServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
@@ -22,19 +22,8 @@ use Spatie\Permission\PermissionServiceProvider;
  *
  * @package Acacha\Users\Providers
  */
-class UsersManagementServiceProvider extends EventServiceProvider
+class UsersManagementServiceProvider extends ServiceProvider
 {
-
-    /**
-     * The event listener mappings for the application.
-     *
-     * @var array
-     */
-    protected $listen = [
-        \Acacha\Users\Events\UserHasBeenMigrated::class => [
-            \Acacha\Users\Listeners\PersistUserMigrationInDatabase::class,
-        ],
-    ];
 
     /**
      * Register the application services.
@@ -117,8 +106,6 @@ class UsersManagementServiceProvider extends EventServiceProvider
      * Bootstrap the application services.
      */
     public function boot() {
-        //Parent will be responsible of registering events using $listen property
-        parent::boot();
 
         $this->defineRoutes();
 

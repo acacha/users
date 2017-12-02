@@ -15,9 +15,6 @@ Route::group(['middleware' => 'web'], function () {
         })->middleware('can:see-users-dashboard');
         Route::get('/user/profile/{user?}', 'UserProfileController@index');
 
-        //Users migration
-        Route::get('management/users-migration', 'UsersMigrationController@index')->name('users-migration');
-
         //Google apps
         Route::get('/management/users/google', 'GoogleAppsUsersController@index');
         Route::get('/management/users/google2', 'GoogleAppsUsersController@check');
