@@ -3,6 +3,7 @@
 namespace Acacha\Users\Providers;
 
 use Acacha\Stateful\Providers\StatefulServiceProvider;
+use Acacha\Users\Facades\AcachaUsers;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use PulkitJalan\Google\Facades\Google;
@@ -10,7 +11,6 @@ use PulkitJalan\Google\GoogleServiceProvider;
 use Acacha\Users\Models\UserInvitation;
 use Acacha\Users\Observers\UserInvitationObserver;
 use Acacha\Users\Observers\UserObserver;
-use AcachaUsers;
 use App\User;
 use Broadcast;
 use Laravel\Passport\Passport;

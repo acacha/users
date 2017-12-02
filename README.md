@@ -24,10 +24,63 @@ laravel new laravel_with_users
 cd laravel_with_users
 ```
 
+Install adminlte-laravel template with:
+
+``` bash
+adminlte-laravel install
+```
+
 Then install this Laravel Package using:
 
 ``` bash
 composer require acacha/users
+```
+
+### Installation on development
+
+Via Composer please first create a new fresh Laravel Project:
+
+``` bash
+laravel new laravel_with_users
+cd laravel_with_users
+```
+
+Install adminlte-laravel template with:
+
+``` bash
+adminlte-laravel install
+```
+
+Install Studio (https://github.com/franzliedke/studio) on your system or use Composer path repositories (https://getcomposer.org/doc/05-repositories.md#path)
+
+With Composer Path repositories add in composer.json file just before require section
+
+```
+"repositories": [
+        {
+            "type": "path",
+            "url": "./users"
+        },
+        {
+            "type": "path",
+            "url": "./users-ebre-escool-migration"
+        }
+    ],
+```
+
+Create folders users and users-ebre-escool-migration with packages (you can clone it):
+
+```
+https://github.com/acacha/users
+https://github.com/acacha/users-ebre-escool-migration
+```
+
+Then install this Laravel Package using:
+
+``` bash
+composer require acacha/stateful-eloquent:dev-master
+composer require acacha/users:dev-master
+composer require acacha/users-ebre-escool-migration:dev-master
 ```
 
 ## Usage
