@@ -46,6 +46,19 @@ class AcachaUsers
     }
 
     /**
+     * Config auth copy path.
+     *
+     * @return array
+     */
+    public function configUsers()
+    {
+        return [
+            ACACHA_USERS_PATH.'/config/users.php' =>
+                config_path('users.php')
+        ];
+    }
+
+    /**
      * Seeds copy path.
      *
      * @return array

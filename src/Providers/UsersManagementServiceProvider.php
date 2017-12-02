@@ -52,6 +52,10 @@ class UsersManagementServiceProvider extends ServiceProvider
         if (config('acacha_users.register_google_service_provider', true)) {
             $this->registerGoogleServiceProvider();
         }
+
+        $this->mergeConfigFrom(
+            ACACHA_USERS_PATH .'/config/users.php', 'acacha_users'
+        );
     }
 
     /**
@@ -113,6 +117,7 @@ class UsersManagementServiceProvider extends ServiceProvider
         $this->publishLanguages();
         $this->publishViews();
         $this->publishConfigAuth();
+        $this->publishConfigusers();
         $this->publishFactories();
 
         $this->loadMigrations();
@@ -196,6 +201,13 @@ class UsersManagementServiceProvider extends ServiceProvider
      */
     private function publishConfigAuth() {
         $this->publishes(AcachaUsers::configAuth(), 'acacha_users_config');
+    }
+
+    /**
+     * Publish config auth.
+     */
+    private function publishConfigusers() {
+        $this->publishes(AcachaUsers::configUsers(), 'acacha_users_config');
     }
 
     /**
