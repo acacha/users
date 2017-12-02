@@ -15,12 +15,19 @@
 
 Acacha users is a Laravel package that add Users managment support yo your Laravel app. 
 
-## Install
+## Installation
 
-Via Composer
+Via Composer please first create a new fresh Laravel Project:
 
 ``` bash
-$ composer require acacha/users
+laravel new laravel_with_users
+cd laravel_with_users
+```
+
+Then install this Laravel Package using:
+
+``` bash
+composer require acacha/users
 ```
 
 ## Usage

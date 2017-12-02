@@ -22,7 +22,7 @@ use Spatie\Permission\PermissionServiceProvider;
  *
  * @package Acacha\Users\Providers
  */
-class UsersManagementServiceProvider extends ServiceProvider
+class UsersServiceProvider extends ServiceProvider
 {
 
     /**
