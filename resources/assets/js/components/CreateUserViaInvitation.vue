@@ -39,7 +39,7 @@
     props: {
       apiUri: {
         type: String,
-        default: '/api/v1/management/users/user-invitation-accept'
+        default: '/api/v1/users/user-invitation-accept'
       },
       email: {
         type: String,

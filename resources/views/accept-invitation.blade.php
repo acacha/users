@@ -6,6 +6,6 @@
 
 @section('main-content')
     <create-user-via-invitation
-            api-url="{{ env('APP_URL') . '/api/v1/management/user-invitations-accept' }}"
+            api-url="{{ env('APP_URL') . '/api/v1/user-invitations-accept' }}"
             email="{{ $email }}" token="{{ $token }}"></create-user-via-invitation>
 @endsection

@@ -14,7 +14,7 @@ export default {
   props: {
     apiUri: {
       type: String,
-      default: '/api/management/users'
+      default: '/api/v1/users'
     },
     collapsed: {
       type: Boolean,

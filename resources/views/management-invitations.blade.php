@@ -5,5 +5,5 @@
 @endsection
 
 @section('main-content')
-    <users-invitations api-url="{{ env('APP_URL') . env('API_URI','/api/v1/management/users') }}" :collapsed-list="false"></users-invitations>
+    <users-invitations api-url="{{ env('APP_URL') . env('API_URI','/api/v1/users') }}" :collapsed-list="false"></users-invitations>
 @endsection

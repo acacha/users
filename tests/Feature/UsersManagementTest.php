@@ -87,7 +87,7 @@ class UsersManagementTest extends TestCase
      */
     public function api_show_302_listing_all_users_if_no_xhr_request()
     {
-        $this->get('/api/v1/management/users')
+        $this->get('/api/v1/users')
              ->assertStatus(302)
              ->assertRedirect('login');
     }
@@ -99,7 +99,7 @@ class UsersManagementTest extends TestCase
      */
     public function api_show_401_listing_all_users_for_unauthorized_users()
     {
-        $this->json('GET','/api/v1/management/users')
+        $this->json('GET','/api/v1/users')
             ->assertStatus(401);
     }
 
@@ -112,7 +112,7 @@ class UsersManagementTest extends TestCase
     public function api_show_an_user_for_authorized_users_correctly()
     {
         $this->signInAsUserManager('api')
-            ->json('GET', '/api/v1/management/users')
+            ->json('GET', '/api/v1/users')
             ->assertStatus(200)
 
             ->assertJson([
@@ -144,7 +144,7 @@ class UsersManagementTest extends TestCase
     {
         factory('App\User',10)->create();
         $this->signInAsUserManager('api')
-            ->json('GET','/api/v1/management/users')
+            ->json('GET','/api/v1/users')
             ->assertJsonStructure(['data' => [
                     '*' => [
                         'id', 'name', 'email','created_at','updated_at'
@@ -159,7 +159,7 @@ class UsersManagementTest extends TestCase
      */
     public function api_show_302_creating_user_if_no_xhr_request()
     {
-        $this->post('/api/v1/management/users')
+        $this->post('/api/v1/users')
             ->assertStatus(302)
             ->assertRedirect('login');
     }
@@ -170,7 +170,7 @@ class UsersManagementTest extends TestCase
      */
     public function api_show_401_creating_user_for_unauthorized_users()
     {
-        $this->json('POST','/api/v1/management/users')
+        $this->json('POST','/api/v1/users')
             ->assertStatus(401);
     }
 
@@ -179,7 +179,7 @@ class UsersManagementTest extends TestCase
      */
     private function post_user_creation($name, $email, $password)
     {
-        return $this->json('POST','/api/v1/management/users', [
+        return $this->json('POST','/api/v1/users', [
             'name' => $name,
             'email' => $email ,
             'password' => bcrypt($password)
@@ -263,7 +263,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function show_user($id) {
-        return $this->json('GET','api/v1/management/users/' . $id);
+        return $this->json('GET','api/v1/users/' . $id);
     }
 
     /**
@@ -315,7 +315,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function edit_user($id , $data) {
-        return $this->json('PUT','api/v1/management/users/' . $id , $data);
+        return $this->json('PUT','api/v1/users/' . $id , $data);
     }
 
     /**
@@ -394,7 +394,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function delete_user($id) {
-        return $this->json('DELETE','api/v1/management/users/' . $id);
+        return $this->json('DELETE','api/v1/users/' . $id);
     }
 
     /**
@@ -464,7 +464,7 @@ class UsersManagementTest extends TestCase
      */
     public function guest_users_cannot_sent_user_invitations()
     {
-        $response = $this->post('/api/v1/management/users-invitations/send');
+        $response = $this->post('/api/v1/users-invitations/send');
 
         $response->assertStatus(302);
     }
@@ -477,7 +477,7 @@ class UsersManagementTest extends TestCase
     public function users_without_authorization_cant_sent_user_invitations()
     {
         $this->signIn(null,'api');
-        $response = $this->post('/api/v1/management/users-invitations/send');
+        $response = $this->post('/api/v1/users-invitations/send');
         $response->assertStatus(403);
     }
 
@@ -510,7 +510,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function post_user_invitation($data){
-        return $this->json('POST','/api/v1/management/users-invitations/send', $data);
+        return $this->json('POST','/api/v1/users-invitations/send', $data);
     }
 
     /**
@@ -598,7 +598,7 @@ class UsersManagementTest extends TestCase
      */
     public function guest_users_cannot_see_user_invitations()
     {
-        $response = $this->json('GET','/api/v1/management/users-invitations');
+        $response = $this->json('GET','/api/v1/users-invitations');
         $response->assertStatus(401);
     }
 
@@ -610,7 +610,7 @@ class UsersManagementTest extends TestCase
     public function users_without_authorization_cannot_see_user_invitations()
     {
         $this->signIn(null,'api');
-        $response = $this->json('GET','/api/v1/management/users-invitations');
+        $response = $this->json('GET','/api/v1/users-invitations');
         $response->assertStatus(403);
     }
 
@@ -621,7 +621,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function delete_user_invitation($id) {
-        return $this->json('DELETE','api/v1/management/users-invitations/' . $id);
+        return $this->json('DELETE','api/v1/users-invitations/' . $id);
     }
 
     /**
@@ -675,7 +675,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function show_user_invitation($id) {
-        return $this->json('GET','api/v1/management/users-invitations/' . $id);
+        return $this->json('GET','api/v1/users-invitations/' . $id);
     }
 
     /**
@@ -727,7 +727,7 @@ class UsersManagementTest extends TestCase
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     private function edit_user_invitation($id , $data) {
-        return $this->json('PUT','api/v1/management/users-invitations/' . $id , $data);
+        return $this->json('PUT','api/v1/users-invitations/' . $id , $data);
     }
 
     /**
@@ -830,7 +830,7 @@ class UsersManagementTest extends TestCase
         $this->publishFactories();
         $this->createUserInvitations(10);
         $this->signInAsUserManager('api');
-        $response = $this->json('GET','/api/v1/management/users-invitations');
+        $response = $this->json('GET','/api/v1/users-invitations');
         $response->assertStatus(200)
             ->assertJsonStructure(['data' => [
             '*' => [

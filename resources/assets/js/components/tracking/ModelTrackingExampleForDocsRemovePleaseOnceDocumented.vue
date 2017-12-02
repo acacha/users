@@ -58,7 +58,7 @@
     props: {
       apiUri: {
         type: String,
-        default: '/api/v1/management/users/invitations'
+        default: '/api/v1/users/invitations'
       },
       model: {
         type: String,

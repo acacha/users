@@ -19,7 +19,7 @@
         </header>
         <section>
             <register-user-by-email
-                    api-url="{{ env('APP_URL') . '/api/v1/management/user-invitations-accept' }}">
+                    api-url="{{ env('APP_URL') . '/api/v1/user-invitations-accept' }}">
             </register-user-by-email>
 
         </section>

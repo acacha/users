@@ -14,24 +14,12 @@ use Password;
 use Response;
 
 /**
- * Class UsersManagementController
+ * Class APIFullUsersController
  *
  * @package Acacha\Users\Http\Controllers
  */
-class UsersManagementController extends Controller
+class APIFullUsersController extends Controller
 {
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return Response
-     */
-    public function users()
-    {
-        $this->authorize('see-manage-users-view');
-        return view('acacha_users::management');
-    }
-
     /**
      * Display a listing of the resource.
      *

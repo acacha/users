@@ -38,7 +38,7 @@
       // a number with default value
       apiUri: {
         type: String,
-        default: '/api/v1/management/users'
+        default: '/api/v1/users'
       }
     },
     methods: {

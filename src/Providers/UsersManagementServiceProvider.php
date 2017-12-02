@@ -148,7 +148,7 @@ class UsersManagementServiceProvider extends ServiceProvider
         if (!$this->app->routesAreCached()) {
             $router = app('router');
             $this->defineWebRoutes($router);
-            $this->defineWebRoutes($router);
+            $this->defineApiRoutes($router);
         }
     }
 
