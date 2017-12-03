@@ -56,6 +56,57 @@ npm install
 npm run dev
 ```
 
+Install also Spatie Laravel Permission Package:
+
+```
+composer require spatie/laravel-permission
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="config"
+php artisan migrate
+``` 
+
+Configure **App\User** adding the following traits:
+
+```
+class User extends Authenticatable
+{
+    use Notifiable, HasRoles, HasApiTokens, ExposePermissions, RevisionableTrait,HasUserMigrations;
+```
+
+Also install spatie/laravel-menu usign wizard:
+
+```
+php artisan adminlte:menu
+```
+
+Use llum boot to run migrations and other common firt execution tasks:
+
+```
+llum boot
+```
+
+Finally assure Laravel Passport (https://laravel.com/docs/5.5/passport) is installed and configured. Composer package is a dependency so no need 
+to install explicitly but be sure to add CreateFreshApiToken midleware to Http/Kernel.php file
+
+```
+protected $middlewareGroups = [
+        'web' => [
+        ...
+        \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
+        ],
+```
+
+And change auth configuration to use passport:
+
+```
+'guards' => [
+        ...
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
+    ],
+```
 ### Installation on development
 
 Via Composer please first create a new fresh Laravel Project:
@@ -130,6 +181,7 @@ npm run dev
 ## Requirements
 
 - Laravel
+- Spatie Laravel permission package
 - Acacha AdminLTE Laravel template
 - Javascript npm packages
   - Vue
@@ -145,6 +197,21 @@ Vuetable-2 problem with transform-runtime (see also http://acacha.org/mediawiki/
 ```
 npm install --save-dev babel-plugin-transform-runtime babel-preset-stage-2
 ```
+
+## Tests
+
+Add the suites to phpunit.xml file:
+
+```
+<testsuite name="Users">
+    <directory suffix="Test.php">./users/tests/Feature</directory>
+</testsuite>
+<testsuite name="UsersEbreEscoolMigration">
+    <directory suffix="Test.php">./users-ebre-escool-migration/tests/Feature</directory>
+</testsuite>
+```
+
+And run phpunit.
 
 ## Usage
 

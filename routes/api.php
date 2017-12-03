@@ -33,11 +33,11 @@ Route::group([ 'prefix' => 'api/v1', 'middleware' => ['api','bindings','throttle
 
         //User reset password email
         Route::post('/users/send/reset-password-email',
-            'APIFullUsersManagementController@sendResetLinkEmail');
+            'APIForgotPasswordController@sendResetLinkEmail');
 //        Route::post('/users/send/reset-password-email',
 //            '\App\Http\Controllers\Auth\NoGuestForgotPasswordController@sendResetLinkEmail');
         Route::post('/users/send/reset-password-email/massive',
-            'APIFullUsersManagementController@massiveSendResetLinkEmail');
+            'APIForgotPasswordController@massiveSendResetLinkEmail');
 
         //Google apps
         Route::get('/users-google/check', 'GoogleAppsUsersController@check');
