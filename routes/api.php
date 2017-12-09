@@ -3,6 +3,10 @@
 Route::group([ 'prefix' => 'api/v1', 'middleware' => ['api','bindings','throttle']], function () {
     Route::group(['middleware' => 'auth:api'], function() {
 
+        //USER
+        Route::get('/user', 'APILoggedUserController@index');
+        Route::put('/user', 'APILoggedUserController@update');
+
         //USERS
         Route::get('/users', 'APIFullUsersController@index');
         Route::post('/users', 'APIFullUsersController@store');
