@@ -2,7 +2,6 @@
 
 namespace Acacha\Users\Http\Requests;
 
-use Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**

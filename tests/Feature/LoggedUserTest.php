@@ -78,7 +78,7 @@ class LoggedUserTest extends TestCase
             'email' => 'pepitopalotes@gmail.com'
         ]);
 
-        $this->assertDatabaseMissing('user_invitations', [
+        $this->assertDatabaseMissing('users', [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email

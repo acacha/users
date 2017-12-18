@@ -36,6 +36,9 @@ class AuthenticatedURLSTest extends TestCase
         return [
             ['get','/api/v1/user'],
             ['put','/api/v1/user'],
+            ['put','/api/v1/user/password'],
+            ['put','/api/v1/user/name'],
+            ['put','/api/v1/user/email']
         ];
     }
 

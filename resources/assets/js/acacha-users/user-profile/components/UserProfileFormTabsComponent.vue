@@ -16,10 +16,9 @@
 </style>
 
 <script>
-
   export default {
     name: 'UserProfileFormTabs',
-    data() {
+    data () {
       return {
         data: 'example'
       }

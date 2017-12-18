@@ -8,14 +8,14 @@
   import { mapGetters } from 'vuex'
 
   export default {
-   name:"UserProfileAvatar",
-   computed: {
-     avatar_url() {
-       return gravatar.url(this.user.email,{protocol: 'https', s: '80', d: 'mm', r: 'g'})
-     },
-     ...mapGetters({
-       user: 'acacha-users/user'
-     }),
-   }
+    name: 'UserProfileAvatar',
+    computed: {
+      avatar_url () {
+        return gravatar.url(this.user.email, {protocol: 'https', s: '80', d: 'mm', r: 'g'})
+      },
+      ...mapGetters({
+        user: 'acacha-users/user'
+      })
+    }
   }
 </script>

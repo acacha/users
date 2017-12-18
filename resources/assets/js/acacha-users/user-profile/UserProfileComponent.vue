@@ -15,17 +15,11 @@
 
   export default {
     name: 'UserProfile',
-    data: function () {
-      return {
-        todo: null,
-      }
-    },
     components: {
-      'user-profile-info-box' : UserProfileInfoBox,
-      'user-profile-form-tabs' : UserProfileFormTabs,
+      'user-profile-info-box': UserProfileInfoBox,
+      'user-profile-form-tabs': UserProfileFormTabs
     },
     created () {
-      console.log('ESBORRAR!')
       this.$store.dispatch('getUser', true)
     }
   }

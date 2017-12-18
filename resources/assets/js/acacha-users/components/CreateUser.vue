@@ -64,7 +64,6 @@
 <style src="./css/fade.css"></style>
 
 <script>
-
   import Form from 'acacha-forms'
 
   import {Box} from 'adminlte-vue'
@@ -79,7 +78,7 @@
       }
     },
     components: {
-      'adminlte-vue-box' : Box
+      'adminlte-vue-box': Box
     },
     props: {
       apiUri: {

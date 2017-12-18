@@ -5,11 +5,11 @@ namespace Acacha\Users\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class CreateUserRequest.
+ * Class LoggedUserNameUpdate.
  *
  * @package Acacha\Users\Http\Requests
  */
-class LoggedUserUpdate extends FormRequest
+class LoggedUserNameUpdate extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,9 +29,7 @@ class LoggedUserUpdate extends FormRequest
     public function rules()
     {
         return [
-            'name'      => 'required|max:255',
-            'email'     => 'required|email|max:255|unique:users',
-            'password'  => 'required|min:6'
+            'name'     => 'required|max:255'
         ];
     }
 }

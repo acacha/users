@@ -2,9 +2,9 @@
     <div>
         <adminlte-alert :alert="alert"></adminlte-alert>
         <form role="form" method="post" @submit.prevent="submit" @keydown="clearErrors($event.target.name)">
-            <adminlte-input-text name="name"></adminlte-input-text>
-            <adminlte-input-email></adminlte-input-email>
-            <adminlte-input-password></adminlte-input-password>
+            <adminlte-input-text name="name" :form-name="formName"></adminlte-input-text>
+            <adminlte-input-email :form-name="formName"></adminlte-input-email>
+            <adminlte-input-password :form-name="formName"></adminlte-input-password>
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary" :disabled="isDisabled()">Update</button>
             </div>
@@ -20,20 +20,20 @@
   import InteractsWithUser from './mixins/interactsWithUser'
   import SubmitsFormWithMessage from './mixins/SubmitsFormWithMessage'
 
-  const UserForm = new Form({
+  const LoggedUserForm = new Form({
     name: '',
     email: '',
-    password: ''
+    passsword: ''
   })
 
   const API_ENDPOINT = '/api/v1/user'
-  const ACACHA_FORM = FormsModule(UserForm)
+  const ACACHA_FORM = FormsModule(LoggedUserForm)
   const ACACHA_FORM_VUEX_MODULE = 'user-form'
 
   export default {
-    name: 'UserForm',
+    name: 'LoggedUserForm',
     components: { AdminlteInputTextComponent, AdminlteInputEmailComponent, AdminlteInputPasswordComponent },
-    mixins: [FlashMixin, DisabledSubmitMixin, InteractsWithUser, UsesAcachaForms, ClearErrorsMixin, SubmitsFormWithMessage],
+    mixins: [FlashMixin, DisabledSubmitMixin, UsesAcachaForms, InteractsWithUser, ClearErrorsMixin, SubmitsFormWithMessage],
     methods: {
       submit () {
         this.submitFormWithMessage('put', API_ENDPOINT, 'User changed ok!')

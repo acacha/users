@@ -5,20 +5,34 @@ import CreateUserViaInvitation from './components/CreateUserViaInvitation.vue'
 import UsersDashboard from './components/dashboard/UsersDashboard.vue'
 import ModelTracking from './components/tracking/ModelTracking.vue'
 
-//PROFILE
+// Vuex Modules
+import {AcachaUsersModule} from './store/modules/user'
+import {UserProfileStoreComponent} from './user-profile/base-components/UserProfileStoreComponent'
+
+import UserProfileStore from './store'
+
+// PROFILE
 import UserProfile from './user-profile/UserProfileComponent.vue'
 import UserProfileInfoBox from './user-profile/components/UserProfileInfoBoxComponent.vue'
 
-//MAIN
+// MAIN
 import UserForm from './main/UserForm.vue'
+import LoggedUserForm from './main/LoggedUserForm.vue'
+import LoggedUserNoPasswordForm from './main/LoggedUserNoPasswordForm.vue'
+import LoggedUserNameForm from './main/LoggedUserNameForm.vue'
+import LoggedUserEmailForm from './main/LoggedUserEmailForm.vue'
+import LoggedUserPasswordForm from './main/LoggedUserPasswordForm.vue'
 
-//Full screen components:
+// Full screen components:
 import RegisterUserByEmail from './components/RegisterUserByEmail.vue'
 import InviteUserFullScreen from './components/invitations/InviteUserFullScreen.vue'
 
 // Google Apps vue components
 import GoogleAppsDashboard from './components/google/GoogleAppsDashboard.vue'
 import GoogleAppsUsersList from './components/google/GoogleAppsUsersList.vue'
+
+import Vue from 'vue'
+import { config } from './config/ebre-escool-users-migration'
 
 // auto install
 if (typeof window !== 'undefined' && window.Vue) {
@@ -32,7 +46,7 @@ if (typeof window !== 'undefined' && window.Vue) {
   // // expose AdminlteVue functions if auto installed
   // window.Vue.$adminlte = {todo, todo2}
 
-  //Full screen components:
+  // Full screen components:
   Vue.component('register-user-by-email', RegisterUserByEmail)
   Vue.component('invite-user-fullscreen', InviteUserFullScreen)
 
@@ -40,20 +54,21 @@ if (typeof window !== 'undefined' && window.Vue) {
   Vue.component('google-apps-dashboard', GoogleAppsDashboard)
   Vue.component('google-apps-users-list', GoogleAppsUsersList)
 
-  //Profile
+  // Profile
   Vue.component('user-profile', UserProfile)
   Vue.component('user-profile-info-box', UserProfileInfoBox)
 
-  //Main
+  // Main
   Vue.component('user-form', UserForm)
+  Vue.component('logged-user-form', LoggedUserForm)
+  Vue.component('logged-user-name-form', LoggedUserNameForm)
+  Vue.component('logged-user-email-form', LoggedUserEmailForm)
 }
-
-import { config } from './config/ebre-escool-users-migration'
 
 window.acacha_users = {}
 window.acacha_users.config = config
 
-//Components
+// Components
 export {
   UsersManagement,
   UserInvitations,
@@ -67,24 +82,22 @@ export {
   GoogleAppsUsersList,
   UserProfile,
   UserProfileInfoBox,
-  UserForm
+  UserForm,
+  LoggedUserForm,
+  LoggedUserNoPasswordForm,
+  LoggedUserNameForm,
+  LoggedUserEmailForm,
+  LoggedUserPasswordForm
 }
 
-import UserProfileStore from './store'
-
-//Stores
+// Stores
 export {
   UserProfileStore
 }
 
-//Vuex Modules
-import {AcachaUsersModule} from './store/modules/user'
-
 export {
   AcachaUsersModule
 }
-
-import {UserProfileStoreComponent} from './user-profile/base-components/UserProfileStoreComponent'
 
 export {
   UserProfileStoreComponent

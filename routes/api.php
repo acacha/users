@@ -7,6 +7,15 @@ Route::group([ 'prefix' => 'api/v1', 'middleware' => ['api','bindings','throttle
         Route::get('/user', 'APILoggedUserController@index');
         Route::put('/user', 'APILoggedUserController@update');
 
+        //User password:
+        Route::put('/user/password', 'APILoggedUserPasswordController@update');
+
+        //User name
+        Route::put('/user/name', 'APILoggedUserNameController@update');
+
+        //User email
+        Route::put('/user/email', 'APILoggedUserEmailController@update');
+
         //USERS
         Route::get('/users', 'APIFullUsersController@index');
         Route::post('/users', 'APIFullUsersController@store');
@@ -14,7 +23,6 @@ Route::group([ 'prefix' => 'api/v1', 'middleware' => ['api','bindings','throttle
         Route::post('/users-massive', 'APIFullUsersController@massiveDestroy');
         Route::put('/users/{User}', 'APIFullUsersController@update');
         Route::delete('/users/{User}', 'APIFullUsersController@destroy');
-
 
         //USER INVITATIONS
         Route::get('/users-invitations', 'UserInvitationsController@index');
